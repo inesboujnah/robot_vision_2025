@@ -91,8 +91,8 @@ RUN mkdir -p /root/colcon_ws/src && \
     git clone https://github.com/zang09/ORB_SLAM3_ROS2.git /root/colcon_ws/src/orbslam3_ros2
 
 # --- Build ORB-SLAM3 and ROS Wrapper ---
-RUN . /opt/ros/humble/setup.sh && \
-    cd /ORB_SLAM3 && chmod +x build.sh && ./build.sh && \
+# RUN . /opt/ros/humble/setup.sh && \
+#     cd /root/colcon_ws/src/ORB_SLAM3/ && chmod +x build.sh && ./build.sh && \
 #     \
 #     # 2. Configure the ROS Wrapper
 #     sed -i 's|/opt/ros/foxy/lib/python3.8/site-packages/|/opt/ros/humble/lib/python3.10/site-packages/|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
