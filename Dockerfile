@@ -125,3 +125,5 @@ RUN if [ "$USE_CI" = "true" ]; then \
     cd /root/colcon_ws/ && \
     colcon build --symlink-install --packages-select orbslam3; \
     fi
+
+COPY config/ /root/colcon_ws/src/config/
