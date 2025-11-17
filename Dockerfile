@@ -62,7 +62,7 @@ RUN cd /tmp && git clone https://github.com/stevenlovegrove/Pangolin && \
 
 # Add RealSense SDK repository
 RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | tee /etc/apt/keyrings/librealsense.pgp > /dev/null && \
-    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | \
+    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo lsb_release -cs main" | \
     tee /etc/apt/sources.list.d/librealsense.list
 
 # Install SDKs and ROS packages in a single layer
@@ -90,18 +90,23 @@ RUN mkdir -p /root/colcon_ws/src && \
     git clone https://github.com/zang09/ORB-SLAM3-STEREO-FIXED.git ORB_SLAM3 && \
     git clone https://github.com/zang09/ORB_SLAM3_ROS2.git /root/colcon_ws/src/orbslam3_ros2
 
-# --- Build ORB-SLAM3 and ROS Wrapper ---
-RUN . /opt/ros/humble/setup.sh && \
-    cd /ORB_SLAM3 && chmod +x build.sh && ./build.sh && \
-#     \
-#     # 2. Configure the ROS Wrapper
-#     sed -i 's|/opt/ros/foxy/lib/python3.8/site-packages/|/opt/ros/humble/lib/python3.10/site-packages/|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
-#     sed -i 's|~/Install/ORB_SLAM/ORB_SLAM3|/root/colcon_ws/src/ORB_SLAM3|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
-#     \
-#     # 3. Build the ROS Wrapper
-#     . /opt/ros/humble/setup.sh && \
-#     . /ORB_SLAM3/build/devel/setup.sh && \
-#     cd /root/colcon_ws/ && \
-#     colcon build --symlink-install --packages-select orbslam3; 
+ENV CXXFLAGS="-w -fpermissive -std=c++14"
 
-COPY config/ /root/colcon_ws/src/config/
+RUN . /opt/ros/humble/setup.sh; \
+    cd /root/colcon_ws/src/ORB_SLAM3; \
+    chmod +x build.sh; \
+    ./build.sh
+
+
+# # --- Build ORB-SLAM3 and ROS Wrapper ---
+# RUN . /opt/ros/humble/setup.sh && \
+#      cd /root/colcon_ws/src/ORB_SLAM3 && chmod +x build.sh && ./build.sh && \
+   
+#      # 2. Configure the ROS Wrapper
+#      sed -i 's|/opt/ros/foxy/lib/python3.8/site-packages/|/opt/ros/humble/lib/python3.10/site-packages/|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
+#      sed -i 's|~/Install/ORB_SLAM/ORB_SLAM3|/root/colcon_ws/src/ORB_SLAM3|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
+#      \
+#      # 3. Build the ROS Wrapper
+#      . /opt/ros/humble/setup.sh && \
+#      cd /root/colcon_ws/ && \
+#      colcon build --symlink-install --packages-select orbslam3;
