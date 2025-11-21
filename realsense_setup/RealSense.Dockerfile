@@ -24,4 +24,9 @@ WORKDIR /root/
 COPY realsense_entrypoint.sh realsense_entrypoint.sh
 RUN chmod +x realsense_entrypoint.sh
 
-# ENTRYPOINT ["/root/oak_entrypoint.sh"]
+# Add optional wrapper that can start ros2 bag recording
+COPY entrypoint_with_bag.sh entrypoint_with_bag.sh
+RUN chmod +x entrypoint_with_bag.sh
+
+# Use the wrapper as the container ENTRYPOINT. Set `RECORD_BAG=1` at runtime to enable recording.
+ENTRYPOINT ["/root/entrypoint_with_bag.sh"]

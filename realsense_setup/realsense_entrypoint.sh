@@ -2,5 +2,5 @@
 
 source /opt/ros/humble/setup.bash
 
-
-ros2 launch realsense2_camera rs_camera.launch.py
+# Use exec so the ros2 launch process takes PID 1 and receives signals correctly
+exec ros2 launch launch_manager ros2_launch.launch.py

@@ -1,12 +1,8 @@
 FROM osrf/ros:humble-desktop-full-jammy
-ARG USE_CI
 
-# Set frontend to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install base dependencies in a single layer
 RUN apt-get update && apt-get install -y \
-    # Base tools
     gnupg2 \
     curl \
     lsb-core \
@@ -22,9 +18,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     pkg-config \
     python3-dev \
-    # OpenCV dependencies
     python3-numpy \
-    # Pangolin dependencies
     libgl1-mesa-dev \
     libglew-dev \
     libpython3-dev \
@@ -34,7 +28,6 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Build OpenCV dependencies
 RUN apt-get update && apt-get install -y \
     python2-dev \
     libavcodec-dev \
@@ -45,7 +38,6 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Build OpenCV in a single layer (clone, build, install, clean)
 RUN cd /tmp && git clone https://github.com/opencv/opencv.git && \
     cd opencv && \
     git checkout 4.4.0 && mkdir build && cd build && \
@@ -53,19 +45,16 @@ RUN cd /tmp && git clone https://github.com/opencv/opencv.git && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/opencv
 
-# Build Pangolin in a single layer (clone, build, install, clean)
 RUN cd /tmp && git clone https://github.com/stevenlovegrove/Pangolin && \
     cd Pangolin && git checkout v0.9.1 && mkdir build && cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-std=c++14 -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/Pangolin
 
-# Add RealSense SDK repository
 RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | tee /etc/apt/keyrings/librealsense.pgp > /dev/null && \
     echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo lsb_release -cs main" | \
     tee /etc/apt/sources.list.d/librealsense.list
 
-# Install SDKs and ROS packages in a single layer
 RUN apt-get update && apt-get install -y \
     ros-humble-pcl-ros \
     tmux \
@@ -83,30 +72,17 @@ RUN apt-get update && apt-get install -y \
     ros-humble-librealsense2* \
     ros-humble-realsense2-*
 
-# --- Create directories and clone source code ---
-WORKDIR /
-RUN mkdir -p /root/colcon_ws/src && \
-    cd /root/colcon_ws/src && \
-    git clone https://github.com/zang09/ORB-SLAM3-STEREO-FIXED.git ORB_SLAM3 && \
-    git clone https://github.com/zang09/ORB_SLAM3_ROS2.git /root/colcon_ws/src/orbslam3_ros2
+COPY ORB_SLAM3 /root/colcon_ws/src/ORB_SLAM3
+COPY ORB_SLAM3_ROS2 /root/colcon_ws/src/orbslam3_ros2
 
-ENV CXXFLAGS="-w -fpermissive -std=c++14"
+RUN cd /root/colcon_ws/src/ORB_SLAM3 && \
+    chmod +x build.sh && \
+    ./build.sh && \
+    echo "Build OK"
 
-RUN . /opt/ros/humble/setup.sh; \
-    cd /root/colcon_ws/src/ORB_SLAM3; \
-    chmod +x build.sh; \
-    ./build.sh
+RUN source /opt/ros/humble/setup.sh && \
+    cd /root/colcon_ws && \
+    colcon build --symlink-install --packages-select orbslam3
 
-
-# # --- Build ORB-SLAM3 and ROS Wrapper ---
-# RUN . /opt/ros/humble/setup.sh && \
-#      cd /root/colcon_ws/src/ORB_SLAM3 && chmod +x build.sh && ./build.sh && \
-   
-#      # 2. Configure the ROS Wrapper
-#      sed -i 's|/opt/ros/foxy/lib/python3.8/site-packages/|/opt/ros/humble/lib/python3.10/site-packages/|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
-#      sed -i 's|~/Install/ORB_SLAM/ORB_SLAM3|/root/colcon_ws/src/ORB_SLAM3|g' /root/colcon_ws/src/orbslam3_ros2/CMakeLists.txt && \
-#      \
-#      # 3. Build the ROS Wrapper
-#      . /opt/ros/humble/setup.sh && \
-#      cd /root/colcon_ws/ && \
-#      colcon build --symlink-install --packages-select orbslam3;
+WORKDIR /root
+CMD ["bash"]
