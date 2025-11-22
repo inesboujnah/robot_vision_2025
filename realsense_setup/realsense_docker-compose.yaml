@@ -1,0 +1,13 @@
+version: "3"
+services:
+
+  realsense:
+    image: realsense:local # TODO: change image name
+    environment:
+      - RECORD_BAG=1
+    volumes:
+      - ../memory_register/realsense:/root/memory_register/realsense
+    network_mode: host
+    privileged: true
+    stdin_open: true
+    tty: true

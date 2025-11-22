@@ -80,7 +80,7 @@ RUN cd /root/colcon_ws/src/ORB_SLAM3 && \
     ./build.sh && \
     echo "Build OK"
 
-RUN source /opt/ros/humble/setup.sh && \
+RUN . /opt/ros/humble/setup.sh && \
     cd /root/colcon_ws && \
     colcon build --symlink-install --packages-select orbslam3
 

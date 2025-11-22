@@ -1,0 +1,13 @@
+version: "3"
+services:
+
+  oak:
+    image: oak_realsense:local # TODO: change image name
+    environment:
+      - RECORD_BAG=1
+    volumes:
+      - ../memory_register/oak:/root/memory_register/oak
+    network_mode: host
+    privileged: true
+    stdin_open: true
+    tty: true
