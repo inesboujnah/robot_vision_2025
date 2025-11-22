@@ -7,6 +7,7 @@ services:
       - RECORD_BAG=1
     volumes:
       - ../memory_register/oak:/root/memory_register/oak
+      - ../memory_register/oak/orbslam_data:/root/memory_register/oak/orb_slam_data
     network_mode: host
     privileged: true
     stdin_open: true

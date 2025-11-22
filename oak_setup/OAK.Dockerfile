@@ -26,7 +26,7 @@ RUN chmod +x oak_entrypoint.sh
 
 # Add optional wrapper that can start ros2 bag recording
 COPY entrypoint_with_bag_oak.sh entrypoint_with_bag_oak.sh
-RUN mkdir -p /root/memory_register/oak &&\
+RUN mkdir -p /root/memory_register/oak/orbslam_data &&\
     chmod +x entrypoint_with_bag_oak.sh
 
 # Use the wrapper as the container ENTRYPOINT. Set `RECORD_BAG=1` at runtime to enable recording.
