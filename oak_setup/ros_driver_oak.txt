@@ -1,3 +1,0 @@
-OAK-D
-
-sudo apt install ros-humble-depthai-ros

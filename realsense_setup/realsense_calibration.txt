@@ -1,1 +1,0 @@
-ros2 service call /camera/camera/calib_config_read 
