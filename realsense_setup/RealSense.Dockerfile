@@ -21,13 +21,11 @@ RUN /bin/bash -lc "source /opt/ros/humble/setup.bash && \
     colcon build --packages-select launch_manager --symlink-install"
 
 WORKDIR /root/
-COPY realsense_entrypoint.sh realsense_entrypoint.sh
-RUN chmod +x realsense_entrypoint.sh
 
 # Add optional wrapper that can start ros2 bag recording
-COPY entrypoint_with_bag.sh entrypoint_with_bag.sh
+COPY realsense_entrypoint_with_bag.sh realsense_entrypoint_with_bag.sh
 RUN mkdir -p /root/memory_register/oak/orbslam_data &&\  
-    chmod +x entrypoint_with_bag.sh
+    chmod +x realsense_entrypoint_with_bag.sh
 
 # Use the wrapper as the container ENTRYPOINT. Set `RECORD_BAG=1` at runtime to enable recording.
-ENTRYPOINT ["/root/entrypoint_with_bag.sh"]
+ENTRYPOINT ["/root/realsense_entrypoint_with_bag.sh"]

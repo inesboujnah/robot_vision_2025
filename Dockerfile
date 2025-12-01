@@ -51,9 +51,13 @@ RUN cd /tmp && git clone https://github.com/stevenlovegrove/Pangolin && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/Pangolin
 
-RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | tee /etc/apt/keyrings/librealsense.pgp > /dev/null && \
-    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo lsb_release -cs main" | \
-    tee /etc/apt/sources.list.d/librealsense.list
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp \
+        | tee /etc/apt/keyrings/librealsense.pgp > /dev/null && \
+    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] \
+        https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" \
+        | tee /etc/apt/sources.list.d/librealsense.list > /dev/null
+
 
 RUN apt-get update && apt-get install -y \
     ros-humble-pcl-ros \
