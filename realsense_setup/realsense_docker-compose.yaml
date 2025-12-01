@@ -7,7 +7,7 @@ services:
       - RECORD_BAG=1
     volumes:
       - ../memory_register/realsense:/root/memory_register/realsense
-      - ../memory_register/realsense/orbslam_data:/root/memory_register/realsense/orb_slam_data
+      - ../memory_register/orbslam_data:/root/memory_register/orb_slam_data
     network_mode: host
     privileged: true
     stdin_open: true
