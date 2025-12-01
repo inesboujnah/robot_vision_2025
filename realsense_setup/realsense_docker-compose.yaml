@@ -2,7 +2,7 @@ version: "3"
 services:
 
   realsense:
-    image: realsense:local # TODO: change image name
+    image: rv_realsense:v1
     environment:
       - RECORD_BAG=1
     volumes:
