@@ -5,7 +5,7 @@ services:
     image: rv_realsense:v1
     environment:
       - RECORD_BAG=0
-      - MODE
+      - MODE=rgbd
     volumes:
       - ../memory_register/realsense:/root/memory_register/realsense
       - ../memory_register/orbslam_data:/root/memory_register/orb_slam_data

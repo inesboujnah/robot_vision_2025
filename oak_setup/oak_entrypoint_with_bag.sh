@@ -20,5 +20,5 @@ if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     ros2 bag record -a -o "$BAG_OUTPUT"
 fi
 
-exec ros2 launch launch_manager ros2_launch.launch.py
+exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
 
