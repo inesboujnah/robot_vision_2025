@@ -26,9 +26,9 @@ RUN /bin/bash -lc "source /opt/ros/humble/setup.bash && \
 WORKDIR /root/
 
 # Add optional wrapper that can start ros2 bag recording
-COPY oak_entrypoint_with_bag.sh oak_entrypoint_with_bag.sh
+COPY oak_entrypoint_with_bag.sh /root/oak_entrypoint_with_bag.sh
 RUN mkdir -p /root/memory_register/oak &&\
-    chmod +x oak_entrypoint_with_bag.sh
+    chmod +x /root/oak_entrypoint_with_bag.sh
 
 # Use the wrapper as the container ENTRYPOINT. Set `RECORD_BAG=1` at runtime to enable recording.
 ENTRYPOINT ["/root/oak_entrypoint_with_bag.sh"]
