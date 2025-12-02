@@ -4,7 +4,7 @@ services:
   oak:
     image: rv_oak:v1
     environment:
-      - RECORD_BAG=1
+      - RECORD_BAG=0
     volumes:
       - ../memory_register/oak:/root/memory_register/oak
       - ../memory_register/orbslam_data:/root/memory_register/orb_slam_data

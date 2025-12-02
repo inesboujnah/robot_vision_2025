@@ -11,9 +11,13 @@ RUN /bin/bash -lc "source /opt/ros/humble/setup.bash && \
 RUN mkdir -p /root/colcon_ws/src/launch_manager/launch
 COPY ros2_launch.py /root/colcon_ws/src/launch_manager/launch/ros2_launch.launch.py
 
-# Modify setup.py to install launch files
-RUN sed -i "/# <<< ADD THIS >>>/a \        ('share', 'launch_manager', glob('launch/*.py'))," \
-    /root/colcon_ws/src/launch_manager/setup.py || true
+# Add `glob` import
+RUN sed -i "1 a from glob import glob" /root/colcon_ws/src/launch_manager/setup.py
+
+# Add installation rule for launch/*.py
+RUN sed -i "/data_files *= *\[/a \        ('share/launch_manager/launch', glob('launch/*.py'))," \
+    /root/colcon_ws/src/launch_manager/setup.py
+
 
 # Build ONLY the launch_manager package
 WORKDIR /root/colcon_ws
