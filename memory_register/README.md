@@ -37,7 +37,7 @@ Both Dockerfiles:
 - Install entrypoint scripts that handle bag recording
 - Set `ENTRYPOINT` to auto-launch nodes on container start
 
-**Run with Docker Compose (Recommended)**
+**Run with Docker Compose**
 
 Navigate to the appropriate setup folder and use the provided compose file:
 
@@ -51,19 +51,6 @@ docker-compose -f realsense_docker-compose.yaml up
 ```bash
 cd oak_setup
 docker-compose -f oak_docker-compose.yaml up
-```
-
-The compose files:
-- Use `network_mode: host` for ROS 2 DDS discovery
-- Run `privileged: true` for camera device access
-- Mount `memory_register/{realsense,oak}` for bag recordings
-- Mount `memory_register/orbslam_data` for ORB-SLAM3 outputs
-- Set `RECORD_BAG=1` to enable automatic bag recording
-- Enable interactive terminal with `stdin_open` and `tty`
-
-To run in detached mode:
-```bash
-docker-compose -f realsense_docker-compose.yaml up -d
 ```
 
 To stop:
@@ -174,28 +161,4 @@ sudo chown -R $(id -u):$(id -g) memory_register/oak
 
 - **Permission denied**: Run container with `--privileged` or add specific device access.
 
-**Manual run (without compose)**
 
-If you prefer running containers directly:
-
-```bash
-# RealSense
-docker run --rm -it \
-  --name realsense_node \
-  --network host \
-  --privileged \
-  -e RECORD_BAG=1 \
-  -v $(pwd)/memory_register/realsense:/root/memory_register/realsense \
-  -v $(pwd)/memory_register/orbslam_data:/root/memory_register/orb_slam_data \
-  rv_realsense:v1
-
-# OAK-D
-docker run --rm -it \
-  --name oak_node \
-  --network host \
-  --privileged \
-  -e RECORD_BAG=1 \
-  -v $(pwd)/memory_register/oak:/root/memory_register/oak \
-  -v $(pwd)/memory_register/orbslam_data:/root/memory_register/orb_slam_data \
-  rv_oak:v1
-```
