@@ -5,7 +5,7 @@ set -e
 # Source ROS 2 setup so ros2 commands are available
 source /opt/ros/humble/setup.bash
 
-cd /root/memory_register/realsene
+cd /root/memory_register/realsense
 
 # If RECORD_BAG is set to 1 or true, start ros2 bag recording in background
 if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then

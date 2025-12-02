@@ -24,7 +24,7 @@ WORKDIR /root/
 
 # Add optional wrapper that can start ros2 bag recording
 COPY realsense_entrypoint_with_bag.sh realsense_entrypoint_with_bag.sh
-RUN mkdir -p /root/memory_register/oak/orbslam_data &&\  
+RUN mkdir -p /root/memory_register/realsense &&\
     chmod +x realsense_entrypoint_with_bag.sh
 
 # Use the wrapper as the container ENTRYPOINT. Set `RECORD_BAG=1` at runtime to enable recording.

@@ -1,139 +1,201 @@
 **Overview**
 
-This README explains how to build and run the Realsense and OAK ROS2 images so that their nodes launch and recorded `ros2 bag` data is saved into the repository `memory_register` folders.
+This README explains how to build and run the RealSense and OAK-D ROS 2 images so that their nodes launch and recorded `ros2 bag` data is saved into the repository `memory_register` folders.
 
 **Prerequisites**
 
-- `docker` installed and working
-- `docker-compose` (optional, for compose example)
+- `docker` and `docker-compose` installed and working
+- Base image `rv_base:v1` already built (contains ROS 2 Humble and dependencies)
 - Sufficient disk space for recorded bags
+- Camera hardware connected (RealSense D435/D455 or OAK-D)
 
 **Prepare host folders**
 
-Create the target folders in the repo to persist bag recordings:
-
-```bash
-# from repository root
-mkdir -p ./memory_register/realsense
-mkdir -p ./memory_register/oak
-```
+The required folders already exist:
+- `./memory_register/realsense` - for RealSense bag recordings
+- `./memory_register/oak` - for OAK-D bag recordings
+- `./memory_register/orbslam_data` - for ORB-SLAM3 outputs
 
 **Build the images**
 
-From the repository root run:
+From the repository root, build the images with these exact tags:
 
 ```bash
-# Build Realsense image
-docker build -t realsense:local -f realsense_setup/RealSense.Dockerfile .
+# Build RealSense image (requires rv_base:v1)
+cd realsense_setup
+docker build -t rv_realsense:v1 -f RealSense.Dockerfile .
 
-# Build OAK image
-docker build -t oak_realsense:local -f oak_setup/OAK.Dockerfile .
+# Build OAK-D image (requires rv_base:v1)
+cd ../oak_setup
+docker build -t rv_oak:v1 -f OAK.Dockerfile .
 ```
 
-**Run (single container) — save to `memory_register`**
+Both Dockerfiles:
+- Extend `rv_base:v1` (ROS 2 Humble base)
+- Create a `launch_manager` ROS 2 package
+- Copy `ros2_launch.py` as the main launch file
+- Install entrypoint scripts that handle bag recording
+- Set `ENTRYPOINT` to auto-launch nodes on container start
 
-Run the Realsense service and persist bags to `memory_register/realsense`:
+**Run with Docker Compose (Recommended)**
 
+Navigate to the appropriate setup folder and use the provided compose file:
+
+**RealSense:**
 ```bash
-# from repository root
-docker run --rm \
-  --name realsense_node \
-  -e RECORD_BAG=1 \
-  -e HOST_UID=$(id -u) \
-  -e HOST_GID=$(id -g) \
-  -e BAG_OPTS="--compression lz4" \
-  -v $(pwd)/memory_register/realsense:/root/memory_register/realsense \
-  realsense:local
+cd realsense_setup
+docker-compose -f realsense_docker-compose.yaml up
 ```
 
-Run the OAK service and persist bags to `memory_register/oak`:
-
+**OAK-D:**
 ```bash
-docker run --rm \
-  --name oak_node \
-  -e RECORD_BAG=1 \
-  -e HOST_UID=$(id -u) \
-  -e HOST_GID=$(id -g) \
-  -v $(pwd)/memory_register/oak:/root/memory_register/oak \
-  oak_realsense:local
+cd oak_setup
+docker-compose -f oak_docker-compose.yaml up
 ```
 
-Notes:
-- `RECORD_BAG=1` enables the wrapper which starts `ros2 bag record` in the background.
-- `BAG_OPTS` can include any additional `ros2 bag record` options (topic filters, compression, etc.).
-- `HOST_UID`/`HOST_GID` (optional) cause the wrapper to chown created bag folders to the host UID/GID so files are accessible without `sudo`.
-- If you don't mount a host folder the bags remain inside the container and will be lost when the container is removed (unless you omit `--rm`).
+The compose files:
+- Use `network_mode: host` for ROS 2 DDS discovery
+- Run `privileged: true` for camera device access
+- Mount `memory_register/{realsense,oak}` for bag recordings
+- Mount `memory_register/orbslam_data` for ORB-SLAM3 outputs
+- Set `RECORD_BAG=1` to enable automatic bag recording
+- Enable interactive terminal with `stdin_open` and `tty`
 
-**Docker Compose example**
+To run in detached mode:
+```bash
+docker-compose -f realsense_docker-compose.yaml up -d
+```
 
-Add the following services to your `docker-compose.yaml` (or use as a reference):
+To stop:
+```bash
+docker-compose -f realsense_docker-compose.yaml down
+```
 
+**Bag recording behavior**
+
+When `RECORD_BAG=1` is set (default in compose files):
+- The entrypoint script runs `ros2 bag record -a` in the background
+- Bags are saved to timestamped folders: `{camera}_YYYY-MM-DD_HH-MM-SS`
+- **RealSense** bags go to `/root/memory_register/realsense/realsense_<timestamp>`
+- **OAK-D** bags go to `/root/memory_register/oak/oak_<timestamp>`
+- All topics are recorded (`-a` flag)
+
+To disable recording, remove the `RECORD_BAG` env var or set it to `0`:
 ```yaml
-services:
-  realsense:
-    image: realsense:local
-    environment:
-      - RECORD_BAG=1
-      - HOST_UID=${HOST_UID:-1000}
-      - HOST_GID=${HOST_GID:-1000}
-    volumes:
-      - ./memory_register/realsense:/root/memory_register/realsense
-
-  oak:
-    image: oak_realsense:local
-    environment:
-      - RECORD_BAG=1
-      - HOST_UID=${HOST_UID:-1000}
-      - HOST_GID=${HOST_GID:-1000}
-    volumes:
-      - ./memory_register/oak:/root/memory_register/oak
+environment:
+  - RECORD_BAG=0
 ```
 
-Start with:
+**Accessing the running container**
+
+To exec into a running container and interact with ROS 2:
 
 ```bash
-# set your UID/GID and bring up services
-export HOST_UID=$(id -u)
-export HOST_GID=$(id -g)
+# RealSense
+docker-compose -f realsense_setup/realsense_docker-compose.yaml exec realsense bash
 
-docker compose up --build
+# OAK-D
+docker-compose -f oak_setup/oak_docker-compose.yaml exec oak bash
 ```
 
-Stop with `Ctrl+C` (or `docker compose down`). The bag folders will be in `./memory_register/realsense` and `./memory_register/oak`.
+Inside the container:
+```bash
+# Source ROS 2 (already done by entrypoint)
+source /opt/ros/humble/setup.bash
 
-**Inspecting and copying bags**
+# List active ROS 2 nodes
+ros2 node list
+
+# List published topics
+ros2 topic list
+
+# Echo a topic
+ros2 topic echo /camera/color/image_raw
+```
+
+**Viewing logs**
+
+```bash
+# Follow logs in real-time
+docker-compose -f realsense_setup/realsense_docker-compose.yaml logs -f
+
+# View logs from specific service
+docker-compose -f oak_setup/oak_docker-compose.yaml logs oak
+```
+
+**Inspecting recorded bags**
 
 List recorded bag folders on host:
 
 ```bash
-ls -l memory_register/realsense
-ls -l memory_register/oak
+ls -la memory_register/realsense/
+ls -la memory_register/oak/
 ```
 
-If a container produced bags but you did not mount the host folder, copy them out from a stopped container:
-
+Inspect bag metadata:
 ```bash
-docker cp <container_id>:/root/memory_register/realsense ./local_copy_of_rosbags
+ros2 bag info memory_register/realsense/realsense_2025-12-02_14-30-15
+```
+
+Play back a bag:
+```bash
+ros2 bag play memory_register/oak/oak_2025-12-02_15-45-00
 ```
 
 **Permissions**
 
-Containers typically run as `root`, so created files may be owned by `root` on the host. Use either:
-
-- the `HOST_UID`/`HOST_GID` env vars (recommended) when running the container so the wrapper chowns the created bag folder to your host user, or
-- run `sudo chown -R $(id -u):$(id -g) memory_register/realsense` after recording to fix ownership.
-
-**Disable recording**
-
-To launch nodes without recording, simply omit the `RECORD_BAG` environment variable (or set it to `0`).
+Bags are created as `root` inside containers. If you need to access them without `sudo`:
 
 ```bash
-docker run --rm -v $(pwd)/memory_register/realsense:/root/memory_register/realsense realsense:local
+sudo chown -R $(id -u):$(id -g) memory_register/realsense
+sudo chown -R $(id -u):$(id -g) memory_register/oak
 ```
 
 **Troubleshooting**
 
-- If `ros2` or `ros2 bag` is not found in the container, verify the image builds successfully and ROS 2 Humble is present.
-- If bags are empty or recording doesn't start, ensure topics are active and that `ros2 bag record` sees published topics (run `ros2 topic list` inside the container to confirm).
+- **Camera not detected**: Ensure USB devices are accessible. You may need to add device mappings:
+  ```yaml
+  devices:
+    - /dev/bus/usb:/dev/bus/usb  # for RealSense
+  ```
 
-If you want, I can add these examples to the repo `docker-compose.yaml` directly or create a top-level `README.md` combining this with other project instructions.
+- **No topics published**: Check camera connection and drivers inside container:
+  ```bash
+  # RealSense
+  rs-enumerate-devices
+  
+  # OAK-D
+  python3 -c "import depthai; print(depthai.Device.getAllAvailableDevices())"
+  ```
+
+- **ROS 2 nodes not visible**: Verify `network_mode: host` is set in compose file for DDS discovery.
+
+- **Bags empty or not recording**: Confirm `RECORD_BAG=1` is set and check entrypoint logs. Verify topics exist with `ros2 topic list`.
+
+- **Permission denied**: Run container with `--privileged` or add specific device access.
+
+**Manual run (without compose)**
+
+If you prefer running containers directly:
+
+```bash
+# RealSense
+docker run --rm -it \
+  --name realsense_node \
+  --network host \
+  --privileged \
+  -e RECORD_BAG=1 \
+  -v $(pwd)/memory_register/realsense:/root/memory_register/realsense \
+  -v $(pwd)/memory_register/orbslam_data:/root/memory_register/orb_slam_data \
+  rv_realsense:v1
+
+# OAK-D
+docker run --rm -it \
+  --name oak_node \
+  --network host \
+  --privileged \
+  -e RECORD_BAG=1 \
+  -v $(pwd)/memory_register/oak:/root/memory_register/oak \
+  -v $(pwd)/memory_register/orbslam_data:/root/memory_register/orb_slam_data \
+  rv_oak:v1
+```
