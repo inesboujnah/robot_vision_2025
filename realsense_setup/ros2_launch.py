@@ -23,13 +23,13 @@ def _launch_setup(context, *args, **kwargs):
         'rs_launch.py'  # more configurable launch
     )
 
-    if mode == 'basic':
-        return [IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(rs_camera_node)
-        )]
+    # Always include the basic camera launch
+    actions = [IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(rs_camera_node)
+    )]
 
     if mode == 'rgbd':
-        return [IncludeLaunchDescription(
+        actions += [IncludeLaunchDescription(
             PythonLaunchDescriptionSource(rs_launch_node),
             launch_arguments={
                 'camera_namespace': 'rgbd',
@@ -43,7 +43,7 @@ def _launch_setup(context, *args, **kwargs):
         )]
 
     if mode == 'stereo':
-        return [IncludeLaunchDescription(
+        actions += [IncludeLaunchDescription(
             PythonLaunchDescriptionSource(rs_launch_node),
             launch_arguments={
                 'camera_namespace': 'stereo',
@@ -68,7 +68,9 @@ def _launch_setup(context, *args, **kwargs):
             )]
         )
         
-        return [camera_launch, calib_service_call]
+        actions += [camera_launch, calib_service_call]
+
+    return actions
 
     raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'basic', 'rgbd', 'stereo', 'calibration'.")
 
