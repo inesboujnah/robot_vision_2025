@@ -29,7 +29,8 @@ def _launch_setup(context, *args, **kwargs):
                 'enable_sync': 'true',
                 'align_depth.enable': 'true',
                 'enable_color': 'true',
-                'enable_depth': 'true'
+                'enable_depth': 'true',
+                'initial_reset': 'true'
             }.items()
         )
         
@@ -43,7 +44,8 @@ def _launch_setup(context, *args, **kwargs):
                 'camera_name': 'D435',
                 'enable_infra1': 'true',
                 'enable_infra2': 'true',
-                'enable_sync': 'true'
+                'enable_sync': 'true',
+                'initial_reset': 'true'
             }.items()
         )
         

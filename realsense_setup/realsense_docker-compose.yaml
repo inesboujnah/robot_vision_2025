@@ -1,23 +1,20 @@
-version: "3"
+version: '3'
 services:
 
   realsense:
     image: rv_realsense:v1
+    shm_size: '2gb'
     environment:
       - RECORD_BAG=0
       - MODE=rgbd
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
     volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../memory_register/realsense:/root/memory_register/realsense
       - ../memory_register/orbslam_data:/root/memory_register/orb_slam_data
+      - /dev:/dev
     network_mode: host
     privileged: true
     stdin_open: true
     tty: true
-    devices:
-    - "/dev/bus/usb:/dev/bus/usb"
-    - "/dev/video0:/dev/video0"
-    - "/dev/video1:/dev/video1"
-    - "/dev/video2:/dev/video2"
-    - "/dev/video3:/dev/video3"
-    - "/dev/video4:/dev/video4"
-    - "/dev/video5:/dev/video5"
