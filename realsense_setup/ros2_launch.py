@@ -51,22 +51,6 @@ def _launch_setup(context, *args, **kwargs):
         
         return [TimerAction(period=delay, actions=[camera_launch])]
 
-    '''if mode == 'calibration':
-        camera_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(rs_launch_node)
-        )
-        
-        # Call calibration service after camera starts
-        calib_service_call = TimerAction(
-            period=delay,
-            actions=[ExecuteProcess(
-                cmd=['ros2', 'service', 'call', '/camera/camera/calib_config_read', 'std_srvs/srv/Empty'],
-                output='screen'
-            )]
-        )
-        
-        return [TimerAction(period=delay, actions=[camera_launch]), calib_service_call]
-    '''
     raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo'.")
 
 
@@ -86,11 +70,3 @@ def generate_launch_description():
         delay_arg,
         OpaqueFunction(function=_launch_setup)
     ])
-
-
-# Usage examples:
-# ros2 launch realsense_setup ros2_launch.py                        # defaults to rgbd with 5 second delay
-# ros2 launch realsense_setup ros2_launch.py mode:=basic
-# ros2 launch realsense_setup ros2_launch.py mode:=stereo delay:=3.0  # custom delay
-# ros2 launch realsense_setup ros2_launch.py mode:=calibration delay:=2.0
-# ros2 service call /camera/camera/calib_config_read

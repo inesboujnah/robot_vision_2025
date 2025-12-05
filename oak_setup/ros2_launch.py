@@ -15,12 +15,6 @@ def _launch_setup(context, *args, **kwargs):
         'camera.launch.py'
     )
 
-    oak_calibration_node = os.path.join(
-        get_package_share_directory('depthai_ros_driver'),
-        'launch',
-        'calibration.launch.py'
-    )
-
     if mode == 'rgbd':
         return [
             IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
@@ -62,25 +56,47 @@ def _launch_setup(context, *args, **kwargs):
                 }.items()
             )
         ]
-
-    if mode == 'calibration':
+    
+    if mode == 'calibration-stereo':
         return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_calibration_node))
+            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
+                launch_arguments={
+                    'camera.i_tf_camera_name': 'stereo-inertial',
+                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
+                    'camera.i_pipeline_type': 'Stereo',
+                    'camera.i_enable_sync': 'true',
+                    'pipeline_gen.i_enable_sync': 'true',
+                    'stereo.i_align_depth': 'true',
+                    'pipeline_gen.i_enable_imu': 'true',
+                    'camera.i_calibration_dump': 'true'
+                }.items()
+            )
+        ]
+    
+    if mode == 'calibration-rgbd':
+        return [
+            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
+                launch_arguments={
+                    'camera.i_tf_camera_name': 'rgbd',
+                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
+                    'camera.i_pipeline_type': 'RGBD',
+                    'camera.i_enable_sync': 'true',
+                    'pipeline_gen.i_enable_sync': 'true',
+                    'camera.i_calibration_dump': 'true'
+                }.items()
+            )
         ]
 
-    raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo', 'stereo-inertial', 'calibration'.")
+    raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo', 'stereo-inertial'.")
 
 
 def generate_launch_description():
     mode_arg = DeclareLaunchArgument(
         'mode', default_value='rgbd',
-        description="Mode to launch: 'rgbd', 'stereo', 'stereo-inertial', or 'calibration' (only one at a time)"
+        description="Mode to launch: 'rgbd', 'stereo', 'stereo-inertial' (only one at a time)"
     )
 
     return LaunchDescription([
         mode_arg,
         OpaqueFunction(function=_launch_setup)
     ])
-
-# ros2 launch depthai_ros_driver camera.launch.py
-# ros2 launch depthai_ros_driver calibration.launch.py
