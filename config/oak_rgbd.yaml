@@ -1,70 +1,65 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters. Adjust them!
+# Camera Parameters. Adjusted for OAK-D (1280x720)
 #--------------------------------------------------------------------------------------------
+File.version: "1.0"
+
 Camera.type: "PinHole"
 
-# Camera calibration and distortion parameters (OpenCV) 
-# Copied from the EEPROM data dump in depthai_demo.py.
-Camera.fx: 836.39874268
-Camera.fy: 836.66235352
-Camera.cx: 636.00115967
-Camera.cy: 357.10168457
+# Right Camera calibration and distortion parameters (OpenCV)
+# Values taken from the P matrix (rectified intrinsics)
+Camera1.fx: 759.81958
+Camera1.fy: 759.81958
+Camera1.cx: 635.24548
+Camera1.cy: 352.52649
 
-Camera.k1: 0.0
-Camera.k2: 0.0
-Camera.k3: 0.0
-Camera.k4: 0.0
-Camera.p1: 0.0
-Camera.p2: 0.0
+# Distortion parameters
+# Set to 0.0 because we are using the Projection matrix (P) values.
+# Ensure your ROS node publishes rectified images or the camera is treated as ideal.
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
 
-Camera2.fx: 843.39074707
-Camera2.fy: 843.87249756
-Camera2.cx: 635.90380859
-Camera2.cy: 359.52798462
-
-Camera2.k1: 0.0
-Camera2.k2: 0.0
-Camera2.k3: 0.0
-Camera2.k4: 0.0
-Camera2.p1: 0.0
-Camera2.p2: 0.0
-
-Camera.bFishEye: 0
-
+# Camera resolution
 Camera.width: 1280
 Camera.height: 720
 
 # Camera frames per second 
-Camera.fps: 30.0
-
-# stereo baseline times fx
-Camera.bf: 62.729905701
+Camera.fps: 30
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+# OAK-D usually sends BGR via ROS, but check your specific pipeline. 
+# Standard OpenCV is BGR (0), but ROS default is often RGB (1).
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
-ThDepth: 37.5
+Stereo.ThDepth: 40.0
+# Standard OAK-D baseline is 7.5cm (0.075m)
+Stereo.b: 0.075
+
+# Depth map values factor
+# 1000.0 is correct if depth is in millimeters (standard OAK-D behavior)
+RGBD.DepthMapFactor: 1000.0
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
-
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1200
+# Increased slightly for 720p resolution
+ORBextractor.nFeatures: 1250
 
-# ORB Extractor: Scale factor between levels in the scale pyramid       
+# ORB Extractor: Scale factor between levels in the scale pyramid 	
 ORBextractor.scaleFactor: 1.2
 
-# ORB Extractor: Number of levels in the scale pyramid  
+# ORB Extractor: Number of levels in the scale pyramid	
 ORBextractor.nLevels: 8
 
 # ORB Extractor: Fast threshold
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
 # Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
-# You can lower these values if your images have low contrast                   
+# You can lower these values if your images have low contrast			
 ORBextractor.iniThFAST: 20
 ORBextractor.minThFAST: 7
 
@@ -72,12 +67,12 @@ ORBextractor.minThFAST: 7
 # Viewer Parameters
 #--------------------------------------------------------------------------------------------
 Viewer.KeyFrameSize: 0.05
-Viewer.KeyFrameLineWidth: 1
+Viewer.KeyFrameLineWidth: 1.0
 Viewer.GraphLineWidth: 0.9
-Viewer.PointSize:2
+Viewer.PointSize: 2.0
 Viewer.CameraSize: 0.08
-Viewer.CameraLineWidth: 3
-Viewer.ViewpointX: 0
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
 Viewer.ViewpointY: -0.7
-Viewer.ViewpointZ: -1.8
-Viewer.ViewpointF: 500
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0

@@ -23,7 +23,8 @@ def _launch_setup(context, *args, **kwargs):
                     'camera.i_tf_camera_model': 'OAK-D-PRO-W',
                     'camera.i_pipeline_type': 'RGBD',
                     'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true'
+                    'pipeline_gen.i_enable_sync': 'true',
+                    'rgb.i_synced': 'true'
                 }.items()
             )
         ]
@@ -37,7 +38,9 @@ def _launch_setup(context, *args, **kwargs):
                     'camera.i_pipeline_type': 'Stereo',
                     'camera.i_enable_sync': 'true',
                     'pipeline_gen.i_enable_sync': 'true',
-                    'stereo.i_align_depth': 'true'
+                    'stereo.i_align_depth': 'true',
+                    'stereo.i_publish_synced_rect_pair': 'true',
+                    'stereo.i_synced': 'true'
                 }.items()
             )
         ]
@@ -52,7 +55,11 @@ def _launch_setup(context, *args, **kwargs):
                     'camera.i_enable_sync': 'true',
                     'pipeline_gen.i_enable_sync': 'true',
                     'stereo.i_align_depth': 'true',
-                    'pipeline_gen.i_enable_imu': 'true'
+                    'pipeline_gen.i_enable_imu': 'true',
+                    'stereo.i_publish_synced_rect_pair': 'true',
+                    'stereo.i_synced': 'true',
+                    'imu.i_acc_freq': '400',
+                    'imu.i_gyro_freq': '400'
                 }.items()
             )
         ]
