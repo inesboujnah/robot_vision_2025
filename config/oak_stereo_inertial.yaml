@@ -1,23 +1,28 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters. Adjust them!
+# Camera Parameters. Adjusted for OAK-D Stereo (Rectified)
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
+# "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
+# Your ROS logs indicate the images are rectified (d vectors are 0.0).
 Camera.type: "Rectified"
 
-# Rectified Camera calibration (OpenCV)
-Camera1.fx: 382.613
-Camera1.fy: 382.613
-Camera1.cx: 320.183
-Camera1.cy: 236.455
+# Rectified Camera calibration parameters (OpenCV)
+# Values taken from the P (Projection) matrix in the ROS logs
+Camera1.fx: 759.81958
+Camera1.fy: 759.81958
+Camera1.cx: 635.24548
+Camera1.cy: 352.52649
 
-Stereo.b: 0.0499585
+# Stereo Baseline (in meters)
+# Standard OAK-D baseline is 7.5cm
+Stereo.b: 0.075
 
 # Camera resolution
-Camera.width: 640
-Camera.height: 480
+Camera.width: 1280
+Camera.height: 720
 
 # Camera frames per second 
 Camera.fps: 30
