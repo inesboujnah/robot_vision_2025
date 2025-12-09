@@ -19,4 +19,4 @@ if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
 
 fi
 
-exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE} -d
+exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
