@@ -63,36 +63,6 @@ def _launch_setup(context, *args, **kwargs):
                 }.items()
             )
         ]
-    
-    if mode == 'calibration-stereo':
-        return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
-                launch_arguments={
-                    'camera.i_tf_camera_name': 'stereo-inertial',
-                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
-                    'camera.i_pipeline_type': 'Stereo',
-                    'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true',
-                    'stereo.i_align_depth': 'true',
-                    'pipeline_gen.i_enable_imu': 'true',
-                    'camera.i_calibration_dump': 'true'
-                }.items()
-            )
-        ]
-    
-    if mode == 'calibration-rgbd':
-        return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
-                launch_arguments={
-                    'camera.i_tf_camera_name': 'rgbd',
-                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
-                    'camera.i_pipeline_type': 'RGBD',
-                    'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true',
-                    'camera.i_calibration_dump': 'true'
-                }.items()
-            )
-        ]
 
     raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo', 'stereo-inertial'.")
 

@@ -61,8 +61,8 @@ def generate_launch_description():
     )
     
     delay_arg = DeclareLaunchArgument(
-        'delay', default_value='5.0',
-        description="Delay in seconds before launching the node (default: 5.0)"
+        'delay', default_value='0.0',
+        description="Delay in seconds before launching the node (default: 0.0)"
     )
 
     return LaunchDescription([
