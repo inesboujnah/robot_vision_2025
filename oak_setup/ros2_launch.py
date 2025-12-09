@@ -1,71 +1,112 @@
-from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from ament_index_python.packages import get_package_share_directory
 import os
-
+import yaml
+import tempfile
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, OpaqueFunction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
 
 def _launch_setup(context, *args, **kwargs):
+    # Get the mode from launch configuration
     mode = context.launch_configurations.get('mode', 'rgbd')
 
-    oak_launch_node = os.path.join(
+    # 1. Define base parameters (common to all modes)
+    params = {
+        'camera': {
+            'i_tf_camera_model': 'OAK-D-PRO-W',
+            'i_enable_sync': True,
+        },
+        'pipeline_gen': {
+            'i_enable_sync': True,
+            # We initialize this generally, but will explicitly set False/True per mode below
+        }
+    }
+
+    # 2. Update parameters based on mode
+    if mode == 'rgbd':
+        params['camera'].update({
+            'i_tf_camera_name': 'rgbd',
+            'i_pipeline_type': 'RGBD'
+        })
+        # Explicitly disable IMU for RGBD mode
+        params['pipeline_gen']['i_enable_imu'] = False
+        
+        params['rgb'] = {
+            'i_synced': True,
+            'i_publish_topic': True
+        }
+        params['stereo'] = {
+            'i_align_depth': True,
+            'i_synced': True,
+        }
+
+    elif mode == 'stereo':
+        params['camera'].update({
+            'i_tf_camera_name': 'stereo',
+            'i_pipeline_type': 'Stereo'
+        })
+        # Explicitly disable IMU for Stereo mode
+        params['pipeline_gen']['i_enable_imu'] = False
+        
+        params['stereo'] = {
+            'i_align_depth': False, # No RGB to align to
+            'i_publish_synced_rect_pair': True,
+            'i_synced': True,
+            'i_publish_topic': True
+        }
+        params['left'] = {'i_synced': True}
+        params['right'] = {'i_synced': True}
+
+    elif mode == 'stereo-inertial':
+        params['camera'].update({
+            'i_tf_camera_name': 'stereo-inertial',
+            'i_pipeline_type': 'Stereo'
+        })
+        # Explicitly enable IMU
+        params['pipeline_gen']['i_enable_imu'] = True
+        
+        params['stereo'] = {
+            'i_align_depth': False,
+            'i_publish_synced_rect_pair': True,
+            'i_synced': True,
+            'i_publish_topic': True
+        }
+        params['left'] = {'i_synced': True}
+        params['right'] = {'i_synced': True}
+        
+        params['imu'] = {
+            'i_acc_freq': 400,
+            'i_gyro_freq': 400,
+            'i_synced': True 
+        }
+
+    else:
+        raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo', 'stereo-inertial'.")
+
+    # 3. Wrap parameters in the ROS 2 YAML structure
+    node_name = 'oak' 
+    ros_params_dict = {node_name: {'ros__parameters': params}}
+
+    # 4. Create a temporary YAML file
+    config_fd, config_path = tempfile.mkstemp(suffix='.yaml', prefix=f'oak_{mode}_')
+    with os.fdopen(config_fd, 'w') as f:
+        yaml.dump(ros_params_dict, f, default_flow_style=False)
+    
+    print(f"[INFO] Generated temporary params file: {config_path}")
+
+    # 5. Include the standard OAK launch file passing the params_file
+    oak_launch_path = os.path.join(
         get_package_share_directory('depthai_ros_driver'),
         'launch',
         'camera.launch.py'
     )
 
-    if mode == 'rgbd':
-        return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
-                launch_arguments={
-                    'camera.i_tf_camera_name': 'rgbd',
-                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
-                    'camera.i_pipeline_type': 'RGBD',
-                    'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true',
-                    'rgb.i_synced': 'true'
-                }.items()
-            )
-        ]
-
-    if mode == 'stereo':
-        return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
-                launch_arguments={
-                    'camera.i_tf_camera_name': 'stereo',
-                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
-                    'camera.i_pipeline_type': 'Stereo',
-                    'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true',
-                    'stereo.i_align_depth': 'true',
-                    'stereo.i_publish_synced_rect_pair': 'true',
-                    'stereo.i_synced': 'true'
-                }.items()
-            )
-        ]
-
-    if mode == 'stereo-inertial':
-        return [
-            IncludeLaunchDescription(PythonLaunchDescriptionSource(oak_launch_node),
-                launch_arguments={
-                    'camera.i_tf_camera_name': 'stereo-inertial',
-                    'camera.i_tf_camera_model': 'OAK-D-PRO-W',
-                    'camera.i_pipeline_type': 'Stereo',
-                    'camera.i_enable_sync': 'true',
-                    'pipeline_gen.i_enable_sync': 'true',
-                    'stereo.i_align_depth': 'true',
-                    'pipeline_gen.i_enable_imu': 'true',
-                    'stereo.i_publish_synced_rect_pair': 'true',
-                    'stereo.i_synced': 'true',
-                    'imu.i_acc_freq': '400',
-                    'imu.i_gyro_freq': '400'
-                }.items()
-            )
-        ]
-
-    raise RuntimeError(f"Unknown mode '{mode}'. Expected one of: 'rgbd', 'stereo', 'stereo-inertial'.")
-
+    return [
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(oak_launch_path),
+            launch_arguments={'params_file': config_path}.items()
+        )
+    ]
 
 def generate_launch_description():
     mode_arg = DeclareLaunchArgument(
