@@ -5,3 +5,8 @@ source /root/colcon_ws/install/setup.bash
 
 
 docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
+
+docker tag rv_base:v1 inesboujnah/rv_base:v1
+docker push inesboujnah/rv_base:v1
+
+docker login inesboujnah

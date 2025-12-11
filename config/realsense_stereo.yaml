@@ -5,6 +5,8 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
+System.SaveAtlasToFile: "/root/memory_register/orb_slam_data/map/realsense_stereo"
+
 Camera.type: "Rectified"
 
 # Rectified Camera calibration and distortion parameters (OpenCV)

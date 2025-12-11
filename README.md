@@ -26,12 +26,12 @@ docker build -f Dockerfile -t rv_base:v1 .
 
 **For OAK-D:**
 ```bash
-docker build -f oak_setup/OAK.Dockerfile -t oak_slam:v1 .
+docker build -f oak_setup/OAK.Dockerfile -t rv_oak:v1 .
 ```
 
 **For RealSense:**
 ```bash
-docker build -f realsense_setup/RealSense.Dockerfile -t realsense_slam:v1 .
+docker build -f realsense_setup/RealSense.Dockerfile -t rv_realsense:v1 .
 ```
 
 ### 3. Run with Docker Compose
@@ -84,7 +84,7 @@ Bags are automatically recorded to `memory_register/` folders:
 
 ### Replay a Recorded Bag
 ```bash
-ros2 bag play memory_register/realsense/my_recording
+ros2 bag play memory_register/{root to recording}
 ```
 
 ## Trajectory Evaluation
@@ -95,21 +95,6 @@ ORB-SLAM3 includes evaluation tools in `evaluation/`:
 # Generate trajectory file from ORB-SLAM3 output
 python3 evaluation/evaluate_ate_scale.py ground_truth.txt estimated_trajectory.txt
 ```
-
-## ROS 2 Topics
-
-### Camera Streams
-- `/camera/color/image_raw` - RGB image
-- `/camera/depth/image_raw` - Depth map
-- `/camera/camera_info` - Camera calibration
-
-### SLAM Output
-- `/orb_slam3/pose` - Estimated camera pose
-- `/orb_slam3/map_points` - 3D map points
-- `/orb_slam3/keyframes` - Keyframe positions
-
-### IMU (if available)
-- `/camera/imu` - Inertial measurement data
 
 ## License
 
