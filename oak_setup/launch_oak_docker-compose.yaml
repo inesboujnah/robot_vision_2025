@@ -3,7 +3,7 @@ services:
 
   oak:
     image: rv_oak:v1
-    shm_size: '2gb'
+    shm_size: '4gb'
     environment:
       - RECORD_BAG=0
       - LAUNCH_NODE=1

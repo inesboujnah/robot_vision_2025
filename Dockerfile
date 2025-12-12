@@ -74,7 +74,12 @@ RUN apt-get update && apt-get install -y \
     ros-humble-vision-opencv \
     ros-humble-depthai-ros \
     ros-humble-librealsense2* \
-    ros-humble-realsense2-*
+    ros-humble-realsense2-* \
+    libcanberra-gtk-module \
+    libcanberra-gtk3-module \
+    dbus-x11 \
+    at-spi2-core \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY ORB_SLAM3 /root/colcon_ws/src/ORB_SLAM3
 COPY ORB_SLAM3_ROS2 /root/colcon_ws/src/orbslam3_ros2

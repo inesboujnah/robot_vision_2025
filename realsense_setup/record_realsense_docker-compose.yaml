@@ -4,7 +4,7 @@ services:
   realsense_recorder:
     image: rv_realsense:v1
     container_name: realsense_recorder
-    shm_size: '2gb'
+    shm_size: '4gb'
     init: true
     stop_signal: SIGINT
     environment:
