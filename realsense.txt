@@ -10,3 +10,5 @@ docker tag rv_base:v1 inesboujnah/rv_base:v1
 docker push inesboujnah/rv_base:v1
 
 docker login inesboujnah
+
+sudo chown -R ines:ines /home/ines/Documents/robot_vision_2025/memory_register

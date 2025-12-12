@@ -8,8 +8,8 @@ services:
     init: true
     stop_signal: SIGINT
     environment:
-      - RECORD_BAG=0
-      - LAUNCH_NODE=1
+      - RECORD_BAG=1
+      - LAUNCH_NODE=0
       - MODE=stereo
       - DISPLAY
     volumes:
