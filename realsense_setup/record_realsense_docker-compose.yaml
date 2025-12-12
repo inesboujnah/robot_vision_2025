@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+
+  realsense_recorder:
+    image: rv_realsense:v1
+    container_name: realsense_recorder
+    shm_size: '2gb'
+    init: true
+    stop_signal: SIGINT
+    environment:
+      - RECORD_BAG=1
+      - LAUNCH_NODE=0
+      - MODE=stereo
+      - DISPLAY
+    volumes:
+      - ../memory_register/realsense:/root/memory_register/realsense
+    network_mode: host
+    stdin_open: true
+    tty: true

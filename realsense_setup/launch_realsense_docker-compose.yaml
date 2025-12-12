@@ -1,12 +1,13 @@
-version: '3'
+version: '3.7'
 services:
 
   realsense:
     image: rv_realsense:v1
     shm_size: '2gb'
     environment:
-      - RECORD_BAG=1
-      - MODE=rgbd
+      - RECORD_BAG=0
+      - LAUNCH_NODE=1
+      - MODE=stereo
       - DISPLAY
       - QT_X11_NO_MITSHM=1
     volumes:

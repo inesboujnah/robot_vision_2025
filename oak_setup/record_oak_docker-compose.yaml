@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+
+  oak_recorder:
+    image: rv_oak:v1
+    container_name: oak_recorder
+    shm_size: '2gb'
+    init: true
+    stop_signal: SIGINT
+    environment:
+      - RECORD_BAG=0
+      - LAUNCH_NODE=1
+      - MODE=stereo
+      - DISPLAY
+    volumes:
+      - ../memory_register/oak:/root/memory_register/oak
+    network_mode: host
+    stdin_open: true
+    tty: true

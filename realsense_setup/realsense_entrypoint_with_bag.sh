@@ -17,4 +17,7 @@ if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     exec ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd
 fi
 
-exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+if [ "${LAUNCH_NODE}" = "1" ] || [ "${LAUNCH_NODE,,}" = "true" ]; then
+    
+    exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+fi
