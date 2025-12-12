@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "/root/memory_register/orbslam_data/map/oak_stereo"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_stereo_inertial"
 
 # "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
 # Your ROS logs indicate the images are rectified (d vectors are 0.0).
@@ -30,18 +30,35 @@ Camera.height: 720
 Camera.fps: 30
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
-# ROS usually uses RGB order
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
-# Points further than (Baseline * 40) are treated as "Far" (Monocular observation)
 Stereo.ThDepth: 40.0
+
+# Transformation from body-frame (imu) to left camera
+IMU.T_b_c1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [0.99996495,  0.00703277,  0.00453855,  0.00566337,
+         -0.00700041,  0.99995023, -0.00710614, -0.00169807,
+         -0.00458830,  0.00707412,  0.99996442, -0.00019573,
+          0.00000000,  0.00000000,  0.00000000,  1.00000000]
+
+# Do not insert KFs when recently lost
+IMU.InsertKFsWhenLost: 0
+
+# IMU noise (Use those from VINS-mono)
+IMU.NoiseGyro: 1e-3 # 2.44e-4 #1e-3 # rad/s^0.5
+IMU.NoiseAcc: 1e-2 # 1.47e-3 #1e-2 # m/s^1.5
+IMU.GyroWalk: 1e-5 # rad/s^1.5
+IMU.AccWalk: 2e-4 # m/s^2.5
+IMU.Frequency: 400.0
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-# 1250 is acceptable, though 1500-2000 is often better for 720p resolution
 ORBextractor.nFeatures: 1250
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	

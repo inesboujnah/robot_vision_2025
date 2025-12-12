@@ -78,7 +78,6 @@ RUN apt-get update && apt-get install -y \
 
 COPY ORB_SLAM3 /root/colcon_ws/src/ORB_SLAM3
 COPY ORB_SLAM3_ROS2 /root/colcon_ws/src/orbslam3_ros2
-COPY config /root/colcon_ws/src/config
 
 RUN cd /root/colcon_ws/src/ORB_SLAM3 && \
     chmod +x build.sh && \
