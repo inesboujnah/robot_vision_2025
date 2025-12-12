@@ -12,7 +12,7 @@ cd /root/memory_register/oak
 if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     
     TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
-    BAG_OUTPUT="oak_${TIMESTAMP}"
+    BAG_OUTPUT="oak_${MODE}_${TIMESTAMP}"
     echo "Starting ros2 bag record -a -> ${BAG_OUTPUT}"
     ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd &
     

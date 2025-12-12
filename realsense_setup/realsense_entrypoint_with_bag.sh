@@ -12,7 +12,7 @@ cd /root/memory_register/realsense
 if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     
     TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
-    BAG_OUTPUT="realsense_${TIMESTAMP}"
+    BAG_OUTPUT="realsense_${MODE}_${TIMESTAMP}"
     echo "Starting ros2 bag record -a -> ${BAG_OUTPUT}"
     ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd &
 fi
