@@ -9,7 +9,7 @@ A comprehensive ROS 2 system for vision-based SLAM and motion tracking using mul
 This workspace combines:
 - **ORB-SLAM3**: State-of-the-art visual SLAM system supporting monocular, stereo, and RGB-D modes with IMU integration
 - **ROS 2 Integration**: Full ROS 2 Humble wrapper for ORB-SLAM3
-- **Multi-Camera Support**: Configuration for both RealSense (D435/D455) and OAK-D cameras
+- **Multi-Camera Support**: Configuration for both RealSense (D435) and OAK-D cameras
 - **Data Recording**: Automated bag recording and processing pipeline
 - **Docker Containerization**: Isolated environments for reproducible deployments
 
@@ -44,6 +44,11 @@ docker-compose -f oak_setup/oak_docker-compose.yaml up
 **RealSense:**
 ```bash
 docker-compose -f realsense_setup/realsense_docker-compose.yaml up
+```
+
+**ORB-SLAM3**
+```bash
+docker-compose -f docker-compose.yaml up
 ```
 
 ## Configuration
@@ -81,11 +86,6 @@ Bags are automatically recorded to `memory_register/` folders:
 - **OAK-D bags**: `memory_register/oak/`
 - **RealSense bags**: `memory_register/realsense/`
 - **ORB-SLAM3 outputs**: `memory_register/orbslam_data/`
-
-### Replay a Recorded Bag
-```bash
-ros2 bag play memory_register/{root to recording}
-```
 
 ## Trajectory Evaluation
 
