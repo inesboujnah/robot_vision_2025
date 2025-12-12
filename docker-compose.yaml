@@ -7,6 +7,10 @@ services:
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1
+      - BAG=bags
+      - MODE=stereo
+      - CAMERA=oak
+      - DO_RECTIFY=true
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../memory_register/orbslam_data/trajectory:/root/memory_register/orb_slam_data/trajectory

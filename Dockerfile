@@ -90,4 +90,12 @@ RUN . /opt/ros/humble/setup.sh && \
     colcon build --symlink-install --packages-select orbslam3
 
 WORKDIR /root
+
+COPY entrypoint.sh /root/entrypoint.sh
+RUN mkdir -p /root/memory_register/orbslam_data/trajectory &&\
+    mkdir -p /root/memory_register/orbslam_data/map &&\
+    chmod +x /root/entrypoint.sh
+
+ENTRYPOINT [ "/root/entrypoint.sh" ]
+
 CMD ["bash"]
