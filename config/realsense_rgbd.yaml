@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "/root/memory_register/orb_slam_data/map/realsense_rgbd"
+System.SaveAtlasToFile: "/root/memory_register/orbslam_data/map/realsense_rgbd"
 
 Camera.type: "PinHole"
 

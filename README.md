@@ -34,6 +34,11 @@ docker build -f oak_setup/OAK.Dockerfile -t rv_oak:v1 .
 docker build -f realsense_setup/RealSense.Dockerfile -t rv_realsense:v1 .
 ```
 
+**For ORB-SLAM3:**
+```bash
+docker build -f orbslam_setup/ORBSLAM.Dockerfile -t rv_orbslam:v1 .
+```
+
 ### 3. Run with Docker Compose
 
 **OAK-D:**
@@ -48,7 +53,7 @@ docker-compose -f realsense_setup/realsense_docker-compose.yaml up
 
 **ORB-SLAM3**
 ```bash
-docker-compose -f docker-compose.yaml up
+docker-compose -f orbslam_setup/orbslam_docker-compose.yaml up
 ```
 
 ## Configuration

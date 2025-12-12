@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "/root/memory_register/orb_slam_data/map/oak_stereo_inertial"
+System.SaveAtlasToFile: "/root/memory_register/orbslam_data/map/oak_stereo_inertial"
 
 # "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
 # Your ROS logs indicate the images are rectified (d vectors are 0.0).
