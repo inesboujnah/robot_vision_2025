@@ -7,16 +7,15 @@ services:
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1
-      - BAG=oak_stereo_2025-12-12_11-07-19
+      - BAG=realsense_stereo_2025-12-12_11-04-37
       - MODE=stereo
-      - CAMERA=oak
+      - CAMERA=realsense
       - DO_RECTIFY=true
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../memory_register/orbslam_data/trajectory:/root/memory_register/orb_slam_data/trajectory
       - ../memory_register/orbslam_data/map:/root/memory_register/orb_slam_data/map
       - ../memory_register/realsense:/root/memory_register/realsense
-      - ../memory_register/oak:/root/memory_register/oak
     network_mode: host
     stdin_open: true
     tty: true
