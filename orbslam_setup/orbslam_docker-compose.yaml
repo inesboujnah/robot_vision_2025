@@ -12,10 +12,10 @@ services:
       - NO_AT_BRIDGE=1
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-      # - BAG=realsense_stereo_2025-12-13_11-27-49
+      - BAG=realsense_stereo_2025-12-13_11-27-49
       - MODE=stereo
       - CAMERA=realsense
-      - DO_RECTIFY=false
+      - DO_RECTIFY=true
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
