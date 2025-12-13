@@ -1,14 +1,19 @@
-docker exec -it rv_realsense:v1 bash
+docker exec -it realsense_setup_realsense_1 bash
+source /opt/ros/humble/setup.bash
+source /root/colcon_ws/install/setup.bash
 
+docker exec -it oak_setup_oak_1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
 
 docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
+docker exec oak_setup_oak_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
+
 docker tag rv_base:v1 inesboujnah/rv_base:v1
 docker push inesboujnah/rv_base:v1
-
 docker login inesboujnah
+
 
 sudo chown -R ines:ines /home/ines/Documents/robot_vision_2025/memory_register

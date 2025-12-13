@@ -25,35 +25,65 @@ docker build -f Dockerfile -t rv_base:v1 .
 ### 2. Build Camera-Specific Images
 
 **For OAK-D:**
+
 ```bash
-docker build -f oak_setup/OAK.Dockerfile -t rv_oak:v1 .
+cd oak_setup/
+docker build -f OAK.Dockerfile -t rv_oak:v1 .
 ```
 
 **For RealSense:**
+
 ```bash
-docker build -f realsense_setup/RealSense.Dockerfile -t rv_realsense:v1 .
+cd realsense_setup/
+docker build -f RealSense.Dockerfile -t rv_realsense:v1 .
 ```
 
 **For ORB-SLAM3:**
+
 ```bash
-docker build -f orbslam_setup/ORBSLAM.Dockerfile -t rv_orbslam:v1 .
+cd orbslam_setup/
+docker build -f ORBSLAM.Dockerfile -t rv_orbslam:v1 .
 ```
 
 ### 3. Run with Docker Compose
 
 **OAK-D:**
+
+Terminal 1:
+
 ```bash
-docker-compose -f oak_setup/oak_docker-compose.yaml up
+cd oak_setup/
+docker-compose -f oak_docker-compose.yaml up
+```
+
+Terminal 2:
+
+```bash
+cd oak_setup/
+docker-compose -f oak_docker-compose.yaml up
 ```
 
 **RealSense:**
+
+Terminal 1:
+
 ```bash
-docker-compose -f realsense_setup/realsense_docker-compose.yaml up
+cd realsense_setup/
+docker-compose -f realsense_docker-compose.yaml up
+```
+
+Terminal 2:
+
+```bash
+cd realsense_setup/
+docker-compose -f realsense_docker-compose.yaml up
 ```
 
 **ORB-SLAM3**
+
 ```bash
-docker-compose -f orbslam_setup/orbslam_docker-compose.yaml up
+cd orbslam_setup/
+docker-compose -f orbslam_docker-compose.yaml up
 ```
 
 ## Configuration

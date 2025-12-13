@@ -14,7 +14,10 @@ if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
     BAG_OUTPUT="oak_${MODE}_${TIMESTAMP}"
     echo "Starting ros2 bag record -a -> ${BAG_OUTPUT}"
-    ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd &
+    exec ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd
 fi
 
-exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+if [ "${LAUNCH_NODE}" = "1" ] || [ "${LAUNCH_NODE,,}" = "true" ]; then
+    
+    exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+fi
