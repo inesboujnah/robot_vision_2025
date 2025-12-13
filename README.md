@@ -49,30 +49,12 @@ docker build -f ORBSLAM.Dockerfile -t rv_orbslam:v1 .
 
 **OAK-D:**
 
-Terminal 1:
-
-```bash
-cd oak_setup/
-docker-compose -f oak_docker-compose.yaml up
-```
-
-Terminal 2:
-
 ```bash
 cd oak_setup/
 docker-compose -f oak_docker-compose.yaml up
 ```
 
 **RealSense:**
-
-Terminal 1:
-
-```bash
-cd realsense_setup/
-docker-compose -f realsense_docker-compose.yaml up
-```
-
-Terminal 2:
 
 ```bash
 cd realsense_setup/

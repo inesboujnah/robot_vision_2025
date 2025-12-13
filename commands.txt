@@ -6,6 +6,10 @@ docker exec -it oak_setup_oak_1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
+docker exec -it orbslam_setup_orbslam_1 bash
+source /opt/ros/humble/setup.bash
+source /root/colcon_ws/install/setup.bash
+
 
 docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
