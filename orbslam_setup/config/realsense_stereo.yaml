@@ -1,57 +1,58 @@
 %YAML:1.0
-
-#--------------------------------------------------------------------------------------------
-# Camera Parameters. Adjust them!
-#--------------------------------------------------------------------------------------------
 File.version: "1.0"
-
 System.SaveAtlasToFile: "memory_register/orbslam_data/map/realsense_stereo"
 
-Camera.type: "Rectified"
+# --- Camera Type ---
+Camera.type: "PinHole"
 
-# Rectified Camera calibration and distortion parameters (OpenCV)
+# --- Left Camera ---
 Camera1.fx: 423.3237
 Camera1.fy: 423.3237
 Camera1.cx: 423.5369
 Camera1.cy: 239.2724
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+Camera1.k3: 0.0  # <--- Added
 
+# --- Right Camera ---
+Camera2.fx: 423.3237
+Camera2.fy: 423.3237
+Camera2.cx: 423.5369
+Camera2.cy: 239.2724
+Camera2.k1: 0.0
+Camera2.k2: 0.0
+Camera2.p1: 0.0
+Camera2.p2: 0.0
+Camera2.k3: 0.0  # <--- Added
+
+# --- Stereo Extrinsics ---
 Stereo.b: 0.05
+Stereo.ThDepth: 40.0
+Stereo.T_c1_c2: !!opencv-matrix   # <--- Added
+   rows: 4
+   cols: 4
+   dt: f
+   data: [1.0, 0.0, 0.0, -0.05,
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 1.0]
 
-# Camera resolution
+# --- General Settings ---
 Camera.width: 848
 Camera.height: 480
-
-# Camera frames per second 
 Camera.fps: 30
-
-# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
 
-# Close/Far threshold. Baseline times.
-Stereo.ThDepth: 40.0
-
-#--------------------------------------------------------------------------------------------
-# ORB Parameters
-#--------------------------------------------------------------------------------------------
-# ORB Extractor: Number of features per image
+# --- ORB Settings ---
 ORBextractor.nFeatures: 1250
-
-# ORB Extractor: Scale factor between levels in the scale pyramid 	
 ORBextractor.scaleFactor: 1.2
-
-# ORB Extractor: Number of levels in the scale pyramid	
 ORBextractor.nLevels: 8
-
-# ORB Extractor: Fast threshold
-# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
-# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
-# You can lower these values if your images have low contrast			
 ORBextractor.iniThFAST: 20
 ORBextractor.minThFAST: 7
 
-#--------------------------------------------------------------------------------------------
-# Viewer Parameters
-#--------------------------------------------------------------------------------------------
+# --- Viewer Settings ---
 Viewer.KeyFrameSize: 0.05
 Viewer.KeyFrameLineWidth: 1.0
 Viewer.GraphLineWidth: 0.9
