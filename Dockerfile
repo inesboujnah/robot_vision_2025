@@ -41,7 +41,7 @@ RUN apt-get update && apt-get install -y \
 RUN cd /tmp && git clone https://github.com/opencv/opencv.git && \
     cd opencv && \
     git checkout 4.2.0 && mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D BUILD_EXAMPLES=OFF  -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+    cmake -D CMAKE_BUILD_TYPE=Release -D BUILD_EXAMPLES=OFF  -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D WITH_TBB=OFF -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/opencv
 

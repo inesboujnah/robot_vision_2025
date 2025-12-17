@@ -81,11 +81,35 @@ ros2 bag info /root/memory_register/${CAMERA}/${BAG} 2>&1 | grep -E "Duration|Me
 echo "---"
 echo "Waiting 3 seconds for bag to start streaming messages..."
 sleep 3
-echo "Checking if stereo images are being published NOW..."
-timeout 3 ros2 topic hz /stereo/D435/infra1/image_rect_raw 2>&1 | head -5 || echo "Still no messages (bag may have finished first loop)"
-echo "---"
-echo "Remapping will be: /camera/left -> /stereo/D435/infra1/image_rect_raw"
-echo "                   /camera/right -> /stereo/D435/infra2/image_rect_raw"
+
+# Check topics based on MODE and CAMERA
+if [ "${MODE}" = "rgbd" ]; then
+    echo "Checking if RGBD images are being published NOW..."
+    if [[ "${CAMERA}" == *"realsense"* ]] || [[ "${CAMERA}" == *"d435"* ]]; then
+        timeout 3 ros2 topic hz /rgbd/D435/color/image_raw 2>&1 | head -5 || echo "Still no messages (bag may have finished first loop)"
+        echo "---"
+        echo "Remapping will be: /camera/rgb -> /rgbd/D435/color/image_raw"
+        echo "                   /camera/depth -> /rgbd/D435/aligned_depth_to_color/image_raw"
+    elif [ "${CAMERA}" = "oak" ]; then
+        timeout 3 ros2 topic hz /oak/rgb/image_raw 2>&1 | head -5 || echo "Still no messages (bag may have finished first loop)"
+        echo "---"
+        echo "Remapping will be: /camera/rgb -> /oak/rgb/image_raw"
+        echo "                   /camera/depth -> /oak/stereo/image_raw"
+    fi
+elif [ "${MODE}" = "stereo" ] || [ "${MODE}" = "stereo-inertial" ]; then
+    echo "Checking if stereo images are being published NOW..."
+    if [[ "${CAMERA}" == *"realsense"* ]] || [[ "${CAMERA}" == *"d435"* ]]; then
+        timeout 3 ros2 topic hz /stereo/D435/infra1/image_rect_raw 2>&1 | head -5 || echo "Still no messages (bag may have finished first loop)"
+        echo "---"
+        echo "Remapping will be: /camera/left -> /stereo/D435/infra1/image_rect_raw"
+        echo "                   /camera/right -> /stereo/D435/infra2/image_rect_raw"
+    elif [ "${CAMERA}" = "oak" ]; then
+        timeout 3 ros2 topic hz /oak/left/image_raw 2>&1 | head -5 || echo "Still no messages (bag may have finished first loop)"
+        echo "---"
+        echo "Remapping will be: /camera/left -> /oak/left/image_raw"
+        echo "                   /camera/right -> /oak/right/image_raw"
+    fi
+fi
 echo "---"
 
 # 4. Start SLAM Node with QoS override for bag playback compatibility
@@ -97,6 +121,13 @@ if [ "${MODE}" = "stereo" ] || [ "${MODE}" = "stereo-inertial" ]; then
         --ros-args ${REMAP_ARGS} \
         --param qos_overrides./camera/left.subscription.reliability:=best_effort \
         --param qos_overrides./camera/right.subscription.reliability:=best_effort > $SLAM_LOG 2>&1 &
+elif [ "${MODE}" = "rgbd" ]; then
+    ros2 run orbslam3 ${MODE} \
+        /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \
+        /root/config/${CAMERA}_${MODE}.yaml \
+        --ros-args ${REMAP_ARGS} \
+        --param qos_overrides./camera/rgb.subscription.reliability:=best_effort \
+        --param qos_overrides./camera/depth.subscription.reliability:=best_effort > $SLAM_LOG 2>&1 &
 else
     ros2 run orbslam3 ${MODE} \
         /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \

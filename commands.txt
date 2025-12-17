@@ -21,3 +21,7 @@ docker login inesboujnah
 
 
 sudo chown -R ines:ines /home/ines/Documents/robot_vision_2025/memory_register
+
+xhost +
+
+docker system prune -f
