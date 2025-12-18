@@ -1,0 +1,41 @@
+services:
+  orbslam3:
+    image: rv_orbslam:v1
+    # shm_size: '2gb'
+    ipc: host
+    pid: host
+    runtime: nvidia
+    environment:
+      # WSL Display (use WSLg's display)
+      - DISPLAY=${DISPLAY:-:0}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+      
+      # GPU rendering settings for WSL
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+      
+      # Fallback to software if needed
+      - LIBGL_ALWAYS_SOFTWARE=1
+      
+      # X11 settings
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      - BAG=realsense_stereo_2025-12-13_11-27-49
+      - MODE=stereo
+      - CAMERA=realsense
+      - DO_RECTIFY=false
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /mnt/wslg:/mnt/wslg:rw
+      - /usr/lib/wsl:/usr/lib/wsl:ro
+      - /dev/dri:/dev/dri
+      - ./logs:/tmp/logs
+      - ../memory_register/orbslam_data/trajectory:/root/memory_register/orbslam_data/trajectory
+      - ../memory_register/orbslam_data/map:/root/memory_register/orbslam_data/map
+      - ../memory_register/oak:/root/memory_register/oak
+      - ../memory_register/realsense:/root/memory_register/realsense
+    network_mode: host
+    stdin_open: true
+    tty: true
