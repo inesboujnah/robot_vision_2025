@@ -13,51 +13,26 @@ BAG_LOG="$LOG_DIR/bag_output.log"
 : > $SLAM_LOG
 : > $BAG_LOG
 
-# --- 2. Define Remapping and QoS ---
+# --- 2. Define Remapping ---
 REMAP_ARGS=""
-QOS_ARGS=""
 
 if [ "${CAMERA}" = "oak" ]; then
     if [ "${MODE}" = "stereo-inertial" ]; then
-        # 1. Define Remaps
-        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw \
-                    --remap /camera/right:=/oak/right/image_raw \
-                    --remap /imu:=/oak/imu/data"
-        
-        # 2. Define QoS for the REMAPPED names
-        QOS_ARGS="--param qos_overrides./oak/left/image_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./oak/right/image_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./oak/imu/data.subscription.reliability:=best_effort"
+        REMAP_ARGS="--remap camera/left:=/oak/left/image_raw --remap camera/right:=/oak/right/image_raw --remap imu:=/oak/imu/data"
 
     elif [ "${MODE}" = "stereo" ]; then
-        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw \
-                    --remap /camera/right:=/oak/right/image_raw"
-        
-        QOS_ARGS="--param qos_overrides./oak/left/image_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./oak/right/image_raw.subscription.reliability:=best_effort"
+        REMAP_ARGS="--remap camera/right:=/oak/right/image_raw --remap camera/left:=/oak/left/image_raw"
 
     elif [ "${MODE}" = "rgbd" ]; then
-        REMAP_ARGS="--remap /camera/rgb:=/oak/rgb/image_raw \
-                    --remap /camera/depth:=/oak/stereo/image_raw"
-        
-        QOS_ARGS="--param qos_overrides./oak/rgb/image_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./oak/stereo/image_raw.subscription.reliability:=best_effort"
+        REMAP_ARGS="--remap camera/rgb:=/oak/rgb/image_raw --remap camera/depth:=/oak/stereo/image_raw"
     fi
 
 elif [ "${CAMERA}" == "realsense" ]; then
     if [ "${MODE}" = "stereo" ]; then
-        REMAP_ARGS="--remap /camera/left:=/stereo/D435/infra1/image_rect_raw \
-                    --remap /camera/right:=/stereo/D435/infra2/image_rect_raw"
-        
-        QOS_ARGS="--param qos_overrides./stereo/D435/infra1/image_rect_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./stereo/D435/infra2/image_rect_raw.subscription.reliability:=best_effort"
+        REMAP_ARGS="--remap camera/left:=/stereo/D435/infra1/image_rect_raw --remap camera/right:=/stereo/D435/infra2/image_rect_raw"
 
     elif [ "${MODE}" = "rgbd" ]; then
-        REMAP_ARGS="--remap /camera/rgb:=/rgbd/D435/color/image_raw \
-                    --remap /camera/depth:=/rgbd/D435/aligned_depth_to_color/image_raw"
-        
-        QOS_ARGS="--param qos_overrides./rgbd/D435/color/image_raw.subscription.reliability:=best_effort \
-                  --param qos_overrides./rgbd/D435/aligned_depth_to_color/image_raw.subscription.reliability:=best_effort"
+        REMAP_ARGS="--remap camera/rgb:=/rgbd/D435/color/image_raw --remap camera/depth:=/rgbd/D435/aligned_depth_to_color/image_raw"
     fi
 fi
 
@@ -68,7 +43,7 @@ if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
     echo "----------------------------------------------------"
 
     # 1. Start Bag in Background
-    ros2 bag play /root/memory_register/${CAMERA}/${BAG} --loop > $BAG_LOG 2>&1 &
+    ros2 bag play /root/memory_register/${CAMERA}/${BAG} --loop --clock > $BAG_LOG 2>&1 &
     BAG_PID=$!
 
     # 2. WAIT FOR BAG TO ACTUALLY START PUBLISHING
@@ -105,6 +80,7 @@ if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
     echo "Checking bag information:"
     ros2 bag info /root/memory_register/${CAMERA}/${BAG} 2>&1 | grep -E "Duration|Message count|Topic information" | head -10 || true
     echo "---"
+    
 
     sleep 3
 
@@ -124,6 +100,8 @@ if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
             ros2 topic hz /oak/left/image_raw 2>&1 | head -5
             echo "Right: publishing"
             ros2 topic hz /oak/right/image_raw 2>&1 | head -5
+            ros2 topic echo /oak/left/image_raw --field header.stamp --once
+            ros2 topic echo /oak/right/image_raw --field header.stamp --once
             echo "stereo mode verified"
         elif [ "${MODE}" = "rgbd" ]; then
             echo "RGB: publishing"
@@ -155,14 +133,14 @@ echo "Starting SLAM."
 if [ "${MODE}" = "stereo" ] || [ "${MODE}" = "stereo-inertial" ]; then
     ros2 run orbslam3 ${MODE} \
         /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \
-        /root/config/${CAMERA}_${MODE}.yaml \
+        /root/orbslam_setup/config/${CAMERA}_${MODE}.yaml \
         ${DO_RECTIFY} \
-        --ros-args ${REMAP_ARGS} ${QOS_ARGS} > $SLAM_LOG 2>&1 &
+        --ros-args ${REMAP_ARGS} -p use_sim_time:=true > $SLAM_LOG 2>&1 &
 elif [ "${MODE}" = "rgbd" ]; then
     ros2 run orbslam3 ${MODE} \
         /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \
-        /root/config/${CAMERA}_${MODE}.yaml \
-        --ros-args ${REMAP_ARGS} ${QOS_ARGS} > $SLAM_LOG 2>&1 &
+        /root/orbslam_setup/config/${CAMERA}_${MODE}.yaml \
+        --ros-args ${REMAP_ARGS} -p use_sim_time:=true > $SLAM_LOG 2>&1 &
 fi
 SLAM_PID=$!
 

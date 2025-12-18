@@ -12,8 +12,8 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
-      - BAG=oak_stereo-inertial_2025-12-18_17-19-14
-      - MODE=stereo-inertial
+      - BAG=oak_stereo_2025-12-18_19-13-15
+      - MODE=stereo
       - CAMERA=oak
       - DO_RECTIFY=false
       - FROM_BAG=1
@@ -25,6 +25,7 @@ services:
       - ../memory_register/orbslam_data/map:/root/memory_register/orbslam_data/map
       - ../memory_register/oak:/root/memory_register/oak
       - ../memory_register/realsense:/root/memory_register/realsense
+      - ../orbslam_setup/config:/root/orbslam_setup/config
     network_mode: host
     stdin_open: true
     tty: true
