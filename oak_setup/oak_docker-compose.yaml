@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   oak:
-    image: rv_oak:v1
+    image: rv_oak:humble
     shm_size: '4gb'
     stop_signal: SIGINT
     environment:

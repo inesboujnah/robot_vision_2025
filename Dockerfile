@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     python3-pip \
     libpng16-16 \
+    libpng-dev \
     libjpeg-turbo8 \
     libtiff5 \
     cmake \
@@ -72,6 +73,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-image-transport \
     ros-humble-image-common \
     ros-humble-vision-opencv \
+    ros-humble-message-filters \
     ros-humble-depthai-ros \
     ros-humble-librealsense2* \
     ros-humble-realsense2-* \

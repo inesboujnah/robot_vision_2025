@@ -19,7 +19,7 @@ This workspace combines:
 ### 1. Build Base Docker Image
 
 ```bash
-docker build -f Dockerfile -t rv_base:v1 .
+docker build -f Dockerfile -t rv_base:humble .
 ```
 
 ### 2. Build Camera-Specific Images
@@ -28,21 +28,21 @@ docker build -f Dockerfile -t rv_base:v1 .
 
 ```bash
 cd oak_setup/
-docker build -f OAK.Dockerfile -t rv_oak:v1 .
+docker build -f OAK.Dockerfile -t rv_oak:humble .
 ```
 
 **For RealSense:**
 
 ```bash
 cd realsense_setup/
-docker build -f RealSense.Dockerfile -t rv_realsense:v1 .
+docker build -f RealSense.Dockerfile -t rv_realsense:humble .
 ```
 
 **For ORB-SLAM3:**
 
 ```bash
 cd orbslam_setup/
-docker build -f ORBSLAM.Dockerfile -t rv_orbslam:v1 .
+docker build -f ORBSLAM.Dockerfile -t rv_orbslam:humble .
 ```
 
 ### 3. Run with Docker Compose

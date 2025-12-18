@@ -2,7 +2,7 @@ version: "2.3"
 services:
 
   orbslam3:
-    image: rv_orbslam:v1
+    image: rv_orbslam:humble
     shm_size: '4gb'
     runtime: nvidia
     environment:
