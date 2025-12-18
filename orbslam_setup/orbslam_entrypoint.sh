@@ -13,21 +13,51 @@ BAG_LOG="$LOG_DIR/bag_output.log"
 : > $SLAM_LOG
 : > $BAG_LOG
 
-# --- 2. DEFINE REMAPPING ---
+# --- 2. Define Remapping and QoS ---
 REMAP_ARGS=""
+QOS_ARGS=""
+
 if [ "${CAMERA}" = "oak" ]; then
     if [ "${MODE}" = "stereo-inertial" ]; then
-        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw --remap /camera/right:=/oak/right/image_raw --remap /imu:=/oak/imu/data"
+        # 1. Define Remaps
+        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw \
+                    --remap /camera/right:=/oak/right/image_raw \
+                    --remap /imu:=/oak/imu/data"
+        
+        # 2. Define QoS for the REMAPPED names
+        QOS_ARGS="--param qos_overrides./oak/left/image_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./oak/right/image_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./oak/imu/data.subscription.reliability:=best_effort"
+
     elif [ "${MODE}" = "stereo" ]; then
-        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw --remap /camera/right:=/oak/right/image_raw"
+        REMAP_ARGS="--remap /camera/left:=/oak/left/image_raw \
+                    --remap /camera/right:=/oak/right/image_raw"
+        
+        QOS_ARGS="--param qos_overrides./oak/left/image_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./oak/right/image_raw.subscription.reliability:=best_effort"
+
     elif [ "${MODE}" = "rgbd" ]; then
-        REMAP_ARGS="--remap /camera/rgb:=/oak/rgb/image_raw --remap /camera/depth:=/oak/stereo/image_raw"
+        REMAP_ARGS="--remap /camera/rgb:=/oak/rgb/image_raw \
+                    --remap /camera/depth:=/oak/stereo/image_raw"
+        
+        QOS_ARGS="--param qos_overrides./oak/rgb/image_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./oak/stereo/image_raw.subscription.reliability:=best_effort"
     fi
+
 elif [ "${CAMERA}" == "realsense" ]; then
     if [ "${MODE}" = "stereo" ]; then
-        REMAP_ARGS="--remap /camera/left:=/stereo/D435/infra1/image_rect_raw --remap /camera/right:=/stereo/D435/infra2/image_rect_raw"
+        REMAP_ARGS="--remap /camera/left:=/stereo/D435/infra1/image_rect_raw \
+                    --remap /camera/right:=/stereo/D435/infra2/image_rect_raw"
+        
+        QOS_ARGS="--param qos_overrides./stereo/D435/infra1/image_rect_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./stereo/D435/infra2/image_rect_raw.subscription.reliability:=best_effort"
+
     elif [ "${MODE}" = "rgbd" ]; then
-        REMAP_ARGS="--remap /camera/rgb:=/rgbd/D435/color/image_raw --remap /camera/depth:=/rgbd/D435/aligned_depth_to_color/image_raw"
+        REMAP_ARGS="--remap /camera/rgb:=/rgbd/D435/color/image_raw \
+                    --remap /camera/depth:=/rgbd/D435/aligned_depth_to_color/image_raw"
+        
+        QOS_ARGS="--param qos_overrides./rgbd/D435/color/image_raw.subscription.reliability:=best_effort \
+                  --param qos_overrides./rgbd/D435/aligned_depth_to_color/image_raw.subscription.reliability:=best_effort"
     fi
 fi
 
@@ -107,22 +137,18 @@ echo "Press any key to start SLAM..."
 read -n 1 -s -r
 echo "Starting SLAM."
 
-# 4. Start SLAM Node with QoS override for bag playback compatibility
+# 4. Start SLAM Node
 if [ "${MODE}" = "stereo" ] || [ "${MODE}" = "stereo-inertial" ]; then
     ros2 run orbslam3 ${MODE} \
         /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \
         /root/config/${CAMERA}_${MODE}.yaml \
         ${DO_RECTIFY} \
-        --ros-args ${REMAP_ARGS} \
-        --param qos_overrides./camera/left.subscription.reliability:=best_effort \
-        --param qos_overrides./camera/right.subscription.reliability:=best_effort > $SLAM_LOG 2>&1 &
+        --ros-args ${REMAP_ARGS} ${QOS_ARGS} > $SLAM_LOG 2>&1 &
 elif [ "${MODE}" = "rgbd" ]; then
     ros2 run orbslam3 ${MODE} \
         /root/colcon_ws/src/ORB_SLAM3/Vocabulary/ORBvoc.txt \
         /root/config/${CAMERA}_${MODE}.yaml \
-        --ros-args ${REMAP_ARGS} \
-        --param qos_overrides./camera/rgb.subscription.reliability:=best_effort \
-        --param qos_overrides./camera/depth.subscription.reliability:=best_effort > $SLAM_LOG 2>&1 &
+        --ros-args ${REMAP_ARGS} ${QOS_ARGS} > $SLAM_LOG 2>&1 &
 fi
 SLAM_PID=$!
 
