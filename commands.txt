@@ -15,6 +15,8 @@ docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 
 
 docker exec oak_setup_oak_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
+docker exec orbslam_setup_orbslam3_1 bash -c "pkill -9 -f 'orbslam3'"
+
 docker tag rv_base:v1 inesboujnah/rv_base:v1
 docker push inesboujnah/rv_base:v1
 docker login inesboujnah

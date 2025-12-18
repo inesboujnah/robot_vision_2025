@@ -61,80 +61,94 @@ elif [ "${CAMERA}" == "realsense" ]; then
     fi
 fi
 
-echo "----------------------------------------------------"
-echo "Phase 1: Bag Decompression"
-echo "----------------------------------------------------"
+if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
 
-# 1. Start Bag in Background
-ros2 bag play /root/memory_register/${CAMERA}/${BAG} --loop > $BAG_LOG 2>&1 &
-BAG_PID=$!
+    echo "----------------------------------------------------"
+    echo "Phase 1: Bag Decompression"
+    echo "----------------------------------------------------"
 
-# 2. WAIT FOR BAG TO ACTUALLY START PUBLISHING
-COUNT=0
-while ! grep -q "Adding keyboard callbacks" $BAG_LOG; do
-    sleep 0.5
-    COUNT=$((COUNT+1))
-    
-    # CRASH CHECK: If bag player dies, show why and exit.
-    if ! kill -0 $BAG_PID 2>/dev/null; then
-        echo "ERROR: Bag player crashed!"
-        echo "--- BAG LOG START ---"
-        cat $BAG_LOG
-        echo "--- BAG LOG END ---"
-        exit 1
-    fi
+    # 1. Start Bag in Background
+    ros2 bag play /root/memory_register/${CAMERA}/${BAG} --loop > $BAG_LOG 2>&1 &
+    BAG_PID=$!
 
-    if [ $COUNT -ge 240 ]; then 
-        echo "Timeout waiting for bag to start."
-        kill $BAG_PID
-        exit 1
-    fi
-done
+    # 2. WAIT FOR BAG TO ACTUALLY START PUBLISHING
+    COUNT=0
+    while ! grep -q "Adding keyboard callbacks" $BAG_LOG; do
+        sleep 0.5
+        COUNT=$((COUNT+1))
+        
+        # CRASH CHECK: If bag player dies, show why and exit.
+        if ! kill -0 $BAG_PID 2>/dev/null; then
+            echo "ERROR: Bag player crashed!"
+            echo "--- BAG LOG START ---"
+            cat $BAG_LOG
+            echo "--- BAG LOG END ---"
+            exit 1
+        fi
 
-echo "----------------------------------------------------"
-echo "Phase 2: Starting SLAM"
-echo "----------------------------------------------------"
+        if [ $COUNT -ge 240 ]; then 
+            echo "Timeout waiting for bag to start."
+            kill $BAG_PID
+            exit 1
+        fi
+    done
 
-# Show available topics and bag info
-echo "Available ROS2 topics with types:"
-ros2 topic list -t 2>/dev/null || true
-echo "---"
-echo "Checking bag information:"
-ros2 bag info /root/memory_register/${CAMERA}/${BAG} 2>&1 | grep -E "Duration|Message count|Topic information" | head -10 || true
-echo "---"
 
-sleep 3
+    echo "----------------------------------------------------"
+    echo "Phase 2: Starting SLAM"
+    echo "----------------------------------------------------"
 
-# Check topics based on MODE and CAMERA
-if [ "${CAMERA}" = "oak" ]; then
-    if [ "${MODE}" = "stereo-inertial" ]; then
-        ros2 topic hz /oak/left/image_raw 2>&1 | head -5
-        ros2 topic hz /oak/right/image_raw 2>&1 | head -5
-        ros2 topic hz /oak/imu/data 2>&1 | head -5
-        echo "stereo-inertial mode publishing"
-    elif [ "${MODE}" = "stereo" ]; then
-        ros2 topic hz /oak/left/image_raw 2>&1 | head -5
-        ros2 topic hz /oak/right/image_raw 2>&1 | head -5
-        echo "stereo mode publishing"
-    elif [ "${MODE}" = "rgbd" ]; then
-        ros2 topic hz /oak/rgb/image_raw 2>&1 | head -5
-        ros2 topic hz /oak/stereo/image_raw 2>&1 | head -5
-        echo "rgbd mode publishing"
-    fi
-elif [ "${CAMERA}" == "realsense" ]; then
-    if [ "${MODE}" = "stereo" ]; then
-        ros2 topic hz /stereo/D435/infra1/image_rect_raw 2>&1 | head -5
-        ros2 topic hz /stereo/D435/infra2/image_rect_raw 2>&1 | head -5
-        echo "stereo mode publishing"
-    elif [ "${MODE}" = "rgbd" ]; then
-        ros2 topic hz /rgbd/D435/color/image_raw 2>&1 | head -5 
-        ros2 topic hz /rgbd/D435/aligned_depth_to_color/image_raw 2>&1 | head -5
-        echo "rgbd mode publishing"
+    # Show available topics and bag info
+    echo "Available ROS2 topics with types:"
+    ros2 topic list -t 2>/dev/null || true
+    echo "---"
+    echo "Checking bag information:"
+    ros2 bag info /root/memory_register/${CAMERA}/${BAG} 2>&1 | grep -E "Duration|Message count|Topic information" | head -10 || true
+    echo "---"
+
+    sleep 3
+
+    # Check topics based on MODE and CAMERA
+    echo "Verifying topic publishing rates:"
+    if [ "${CAMERA}" = "oak" ]; then
+        if [ "${MODE}" = "stereo-inertial" ]; then
+            echo "Left: publishing"
+            ros2 topic hz /oak/left/image_raw 2>&1 | head -5
+            echo "Right: publishing"
+            ros2 topic hz /oak/right/image_raw 2>&1 | head -5
+            echo "IMU: publishing"
+            ros2 topic hz /oak/imu/data 2>&1 | head -5
+            echo "stereo-inertial mode verified"
+        elif [ "${MODE}" = "stereo" ]; then
+            echo "Left: publishing"
+            ros2 topic hz /oak/left/image_raw 2>&1 | head -5
+            echo "Right: publishing"
+            ros2 topic hz /oak/right/image_raw 2>&1 | head -5
+            echo "stereo mode verified"
+        elif [ "${MODE}" = "rgbd" ]; then
+            echo "RGB: publishing"
+            ros2 topic hz /oak/rgb/image_raw 2>&1 | head -5
+            echo "Depth: publishing"
+            ros2 topic hz /oak/stereo/image_raw 2>&1 | head -5
+            echo "rgbd mode verified"
+        fi
+    elif [ "${CAMERA}" == "realsense" ]; then
+        if [ "${MODE}" = "stereo" ]; then
+            echo "Infra1: publishing"
+            ros2 topic hz /stereo/D435/infra1/image_rect_raw 2>&1 | head -5
+            echo "Infra2: publishing"
+            ros2 topic hz /stereo/D435/infra2/image_rect_raw 2>&1 | head -5
+            echo "stereo mode verified"
+        elif [ "${MODE}" = "rgbd" ]; then
+            echo "RGB: publishing"
+            ros2 topic hz /rgbd/D435/color/image_raw 2>&1 | head -5
+            echo "Depth: publishing"
+            ros2 topic hz /rgbd/D435/aligned_depth_to_color/image_raw 2>&1 | head -5
+            echo "rgbd mode verified"
+        fi
     fi
 fi
 
-echo "Press any key to start SLAM..."
-read -n 1 -s -r
 echo "Starting SLAM."
 
 # 4. Start SLAM Node

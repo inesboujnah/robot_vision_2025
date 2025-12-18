@@ -3,22 +3,24 @@ services:
 
   orbslam3:
     image: rv_orbslam:v1
-    shm_size: '2gb'
+    shm_size: '4gb'
     runtime: nvidia
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
       - XDG_RUNTIME_DIR=/tmp/runtime-root
-      - NO_AT_BRIDGE=1
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-      - BAG=realsense_stereo_2025-12-13_11-27-49
-      - MODE=stereo
-      - CAMERA=realsense
+      - NO_AT_BRIDGE=1
+      - BAG=oak_stereo-inertial_2025-12-18_17-19-14
+      - MODE=stereo-inertial
+      - CAMERA=oak
       - DO_RECTIFY=false
+      - FROM_BAG=1
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
+      # - ../../robot_vision_2025:/root/robot_vision_2025:rw
       - ../memory_register/orbslam_data/trajectory:/root/memory_register/orbslam_data/trajectory
       - ../memory_register/orbslam_data/map:/root/memory_register/orbslam_data/map
       - ../memory_register/oak:/root/memory_register/oak
