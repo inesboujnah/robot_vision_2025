@@ -1,4 +1,4 @@
-FROM rv_base:v1
+FROM rv_base:humble
 
 WORKDIR /root/
 
