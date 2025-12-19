@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     python3-pip \
     libpng16-16 \
-    libpng-dev \
     libjpeg-turbo8 \
     libtiff5 \
     cmake \
