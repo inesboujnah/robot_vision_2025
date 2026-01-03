@@ -18,13 +18,13 @@ REMAP_ARGS=""
 
 if [ "${CAMERA}" = "oak" ]; then
     if [ "${MODE}" = "stereo-inertial" ]; then
-        REMAP_ARGS="--remap camera/left:=/oak/left/image_raw --remap camera/right:=/oak/right/image_raw --remap imu:=/oak/imu/data"
+        REMAP_ARGS="--remap camera/left:=/oak/left/image_rect --remap camera/right:=/oak/right/image_rect --remap imu:=/oak/imu/data"
 
     elif [ "${MODE}" = "stereo" ]; then
-        REMAP_ARGS="--remap camera/right:=/oak/right/image_raw --remap camera/left:=/oak/left/image_raw"
+        REMAP_ARGS="--remap camera/right:=/oak/right/image_rect --remap camera/left:=/oak/left/image_rect"
 
     elif [ "${MODE}" = "rgbd" ]; then
-        REMAP_ARGS="--remap camera/rgb:=/oak/rgb/image_raw --remap camera/depth:=/oak/stereo/image_raw"
+        REMAP_ARGS="--remap camera/rgb:=/oak/rgb/image_rect --remap camera/depth:=/oak/stereo/image_raw"
     fi
 
 elif [ "${CAMERA}" == "realsense" ]; then
@@ -89,23 +89,21 @@ if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
     if [ "${CAMERA}" = "oak" ]; then
         if [ "${MODE}" = "stereo-inertial" ]; then
             echo "Left: publishing"
-            ros2 topic hz /oak/left/image_raw 2>&1 | head -5
+            ros2 topic hz /oak/left/image_rect 2>&1 | head -5
             echo "Right: publishing"
-            ros2 topic hz /oak/right/image_raw 2>&1 | head -5
+            ros2 topic hz /oak/right/image_rect 2>&1 | head -5
             echo "IMU: publishing"
             ros2 topic hz /oak/imu/data 2>&1 | head -5
             echo "stereo-inertial mode verified"
         elif [ "${MODE}" = "stereo" ]; then
             echo "Left: publishing"
-            ros2 topic hz /oak/left/image_raw 2>&1 | head -5
+            ros2 topic hz /oak/left/image_rect 2>&1 | head -5
             echo "Right: publishing"
-            ros2 topic hz /oak/right/image_raw 2>&1 | head -5
-            ros2 topic echo /oak/left/image_raw --field header.stamp --once
-            ros2 topic echo /oak/right/image_raw --field header.stamp --once
+            ros2 topic hz /oak/right/image_rect 2>&1 | head -5
             echo "stereo mode verified"
         elif [ "${MODE}" = "rgbd" ]; then
             echo "RGB: publishing"
-            ros2 topic hz /oak/rgb/image_raw 2>&1 | head -5
+            ros2 topic hz /oak/rgb/image_rect 2>&1 | head -5
             echo "Depth: publishing"
             ros2 topic hz /oak/stereo/image_raw 2>&1 | head -5
             echo "rgbd mode verified"
@@ -163,11 +161,6 @@ while ! grep -q "Vocabulary loaded!" $SLAM_LOG; do
         exit 1
     fi
 done
-
-echo "------------------------------------------------"
-echo "Checking SLAM node subscriptions..."
-ros2 node info /ORB_SLAM3_ROS2 2>&1 | head -30 || echo "Could not get node info"
-echo "------------------------------------------------"
 
 # 7. Wait for finish or user interrupt (Ctrl+C)
 wait $SLAM_PID
