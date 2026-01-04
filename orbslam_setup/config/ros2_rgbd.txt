@@ -1,0 +1,146 @@
+ros2 topic list
+/diagnostics
+/joint_states
+/oak/nn/spatial_detections
+/oak/rgb/camera_info
+/oak/rgb/image_raw
+/oak/rgb/image_raw/compressed
+/oak/rgb/image_raw/compressedDepth
+/oak/rgb/image_raw/theora
+/oak/rgb/image_rect
+/oak/rgb/image_rect/compressed
+/oak/rgb/image_rect/compressedDepth
+/oak/rgb/image_rect/theora
+/oak/stereo/camera_info
+/oak/stereo/image_raw
+/oak/stereo/image_raw/compressed
+/oak/stereo/image_raw/compressedDepth
+/oak/stereo/image_raw/theora
+/parameter_events
+/robot_description
+/rosout
+/tf
+/tf_static
+inibo@Ubuntu22:~$ ros2 topic echo /oak/stereo/camera_info --once
+header:
+  stamp:
+    sec: 1767280013
+    nanosec: 906149758
+  frame_id: oak_rgb_camera_optical_frame
+height: 400
+width: 640
+distortion_model: rational_polynomial
+d:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+k:
+- 581.4403686523438
+- 0.0
+- 320.12274169921875
+- 0.0
+- 580.7047119140625
+- 197.52635192871094
+- 0.0
+- 0.0
+- 1.0
+r:
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+p:
+- 581.4403686523438
+- 0.0
+- 320.12274169921875
+- 0.0
+- 0.0
+- 580.7047119140625
+- 197.52635192871094
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+binning_x: 0
+binning_y: 0
+roi:
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: false
+---
+inibo@Ubuntu22:~$ ros2 topic echo /oak/rgb/camera_info --once
+header:
+  stamp:
+    sec: 1767280030
+    nanosec: 206371636
+  frame_id: oak_rgb_camera_optical_frame
+height: 400
+width: 640
+distortion_model: rational_polynomial
+d:
+- 8.88440990447998
+- -117.52886962890625
+- -0.0008772265282459557
+- -0.0003428877389524132
+- 529.9208374023438
+- 8.676239013671875
+- -115.7048568725586
+- 521.9739990234375
+k:
+- 581.4403686523438
+- 0.0
+- 320.12274169921875
+- 0.0
+- 580.7047119140625
+- 197.52635192871094
+- 0.0
+- 0.0
+- 1.0
+r:
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+p:
+- 581.4403686523438
+- 0.0
+- 320.12274169921875
+- 0.0
+- 0.0
+- 580.7047119140625
+- 197.52635192871094
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+binning_x: 0
+binning_y: 0
+roi:
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: false
+---
+inibo@Ubuntu22:~$ 
+
+

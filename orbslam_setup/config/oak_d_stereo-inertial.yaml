@@ -1,0 +1,115 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjusted for OAK-D Stereo (Rectified)
+#--------------------------------------------------------------------------------------------
+File.version: "1.0"
+
+# System.SaveAtlasToFile: "/home/inibo/memory_register/orbslam_data/map/oak_stereo_inertial"
+
+# "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
+# Your ROS logs indicate the images are rectified (d vectors are 0.0).
+Camera.type: "Rectified"
+
+# Rectified Camera calibration parameters (OpenCV)
+# Values taken from the P (Projection) matrix in the ROS logs
+Camera1.fx: 804.055
+Camera1.fy: 804.055
+Camera1.cx: 653.464
+Camera1.cy: 366.535
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+
+# Right Camera
+Camera2.fx: 804.055
+Camera2.fy: 804.055
+Camera2.cx: 653.464
+Camera2.cy: 366.535
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+
+# Transformation from Camera 1 to Camera 2
+# Tx is set to -Baseline (-0.0753)
+Stereo.T_c1_c2: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [1.0, 0.0, 0.0, -0.0753,
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 1.0]
+
+
+# Stereo Baseline (in meters)
+# Standard OAK-D baseline is 7.5cm
+Stereo.b: 0.075
+
+# Camera resolution
+Camera.width: 640
+Camera.height: 400
+
+# Camera frames per second 
+Camera.fps: 30
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+Stereo.ThDepth: 40.0
+
+# Transformation from body-frame (imu) to left camera
+IMU.T_b_c1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [0.99996495,  0.00703277,  0.00453855,  0.00566337,
+         -0.00700041,  0.99995023, -0.00710614, -0.00169807,
+         -0.00458830,  0.00707412,  0.99996442, -0.00019573,
+          0.00000000,  0.00000000,  0.00000000,  1.00000000]
+
+# Do not insert KFs when recently lost
+IMU.InsertKFsWhenLost: 0
+
+# IMU noise (Use those from VINS-mono)
+IMU.NoiseGyro: 1e-3 # 2.44e-4 #1e-3 # rad/s^0.5
+IMU.NoiseAcc: 1e-2 # 1.47e-3 #1e-2 # m/s^1.5
+IMU.GyroWalk: 1e-5 # rad/s^1.5
+IMU.AccWalk: 2e-4 # m/s^2.5
+IMU.Frequency: 400.0
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1250
+
+# ORB Extractor: Scale factor between levels in the scale pyramid 	
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid	
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast			
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0

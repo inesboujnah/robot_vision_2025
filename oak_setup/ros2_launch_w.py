@@ -13,7 +13,7 @@ def _launch_setup(context, *args, **kwargs):
     # 1. Define base parameters (common to all modes)
     params = {
         'camera': {
-            'i_tf_camera_model': 'OAK-D-PRO',
+            'i_tf_camera_model': 'OAK-D-PRO-W',
             'i_enable_sync': True,
         },
         'pipeline_gen': {
