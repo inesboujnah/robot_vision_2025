@@ -3,11 +3,11 @@ services:
 
   oak:
     image: rv_oak:humble
-    shm_size: '4gb'
+    ipc: host
     stop_signal: SIGINT
     environment:
-      - RECORD_BAG=1
-      - MODE=stereo-inertial
+      - RECORD_BAG=0
+      - MODE=stereo
       - DISPLAY
       - QT_X11_NO_MITSHM=1
     volumes:

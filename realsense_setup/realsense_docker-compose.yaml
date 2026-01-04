@@ -3,7 +3,7 @@ services:
 
   realsense:
     image: rv_realsense:humble
-    shm_size: '4gb'
+    ipc: host
     stop_signal: SIGINT
     environment:
       - RECORD_BAG=1

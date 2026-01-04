@@ -3,7 +3,7 @@ services:
 
   orbslam3:
     image: rv_orbslam:humble
-    shm_size: '4gb'
+    ipc: host
     runtime: nvidia
     environment:
       - DISPLAY=${DISPLAY}

@@ -27,3 +27,15 @@ sudo chown -R ines:ines /home/ines/Documents/robot_vision_2025/memory_register
 xhost +
 
 docker system prune -f
+
+source /opt/ros/humble/setup.bash && source ~/colcon_ws/install/setup.bash
+
+ros2 launch launch_manager ros2_launch_oak.launch.py mode:=stereo-inertial
+
+ros2 run orbslam3 stereo /home/inibo/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_stereo.yaml false --ros-args --remap camera/right:=/oak/right/image_rect --remap camera/left:=/oak/left/image_rect
+
+ros2 run orbslam3 stereo-inertial ~/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_stereo-inertial.yaml false --ros-args --remap camera/left:=/oak/left/image_rect --remap camera/right:=/oak/right/image_rect --remap imu:=/oak/imu/data
+
+ros2 run orbslam3 rgbd /home/inibo/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_rgbd.yaml --ros-args --remap camera/rgb:=/oak/rgb/image_rect --remap camera/depth:=/oak/stereo/image_raw
+
+ros2 node info /ORB_SLAM3_ROS2
