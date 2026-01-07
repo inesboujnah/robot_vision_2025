@@ -16,7 +16,7 @@ BAG_LOG="$LOG_DIR/bag_output.log"
 # --- 2. Define Remapping ---
 REMAP_ARGS=""
 
-if [ "${CAMERA}" = "oak" ]; then
+if [ "${CAMERA}" = "oak_pro" ] || [ "${CAMERA}" = "oak_pro_wide" ]; then
     if [ "${MODE}" = "stereo-inertial" ]; then
         REMAP_ARGS="--remap camera/left:=/oak/left/image_rect --remap camera/right:=/oak/right/image_rect --remap imu:=/oak/imu/data"
 
@@ -86,7 +86,7 @@ if [ "${FROM_BAG}" = "1" ] || [ "${FROM_BAG,,}" = "true" ]; then
 
     # Check topics based on MODE and CAMERA
     echo "Verifying topic publishing rates:"
-    if [ "${CAMERA}" = "oak" ]; then
+    if [ "${CAMERA}" = "oak_pro" ] || [ "${CAMERA}" = "oak_pro_wide" ]; then
         if [ "${MODE}" = "stereo-inertial" ]; then
             echo "Left: publishing"
             ros2 topic hz /oak/left/image_rect 2>&1 | head -5

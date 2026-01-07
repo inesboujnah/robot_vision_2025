@@ -17,4 +17,9 @@ if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     ros2 bag record -a -o "$BAG_OUTPUT" -x "(.*)/compressed(.*)|(.*)/theora(.*)" --compression-mode file --compression-format zstd &
 fi
 
-exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+if [ "${CAMERA_MODE}" = "pro" ]; then
+    exec ros2 launch launch_manager ros2_launch.launch.py mode:=${MODE}
+elif [ "${CAMERA_MODE}" = "pro_wide" ]; then
+    exec ros2 launch launch_manager ros2_launch_w.launch.py mode:=${MODE}
+fi
+

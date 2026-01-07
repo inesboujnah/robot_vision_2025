@@ -10,6 +10,7 @@ services:
       - MODE=stereo
       - DISPLAY
       - QT_X11_NO_MITSHM=1
+      - CAMERA_MODE: "pro"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../memory_register/oak:/root/memory_register/oak

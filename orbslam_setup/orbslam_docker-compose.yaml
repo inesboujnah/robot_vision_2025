@@ -12,11 +12,11 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
-      - BAG=oak_stereo-inertial_2025-12-19_09-21-22
+      - BAG=
       - MODE=stereo-inertial
-      - CAMERA=oak
+      - CAMERA=oak_pro
       - DO_RECTIFY=false
-      - FROM_BAG=1
+      - FROM_BAG=0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
