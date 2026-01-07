@@ -51,21 +51,21 @@ docker build -f ORBSLAM.Dockerfile -t rv_orbslam:humble .
 
 ```bash
 cd oak_setup/
-docker-compose -f oak_docker-compose.yaml up
+docker compose -f oak_docker-compose.yaml up
 ```
 
 **RealSense:**
 
 ```bash
 cd realsense_setup/
-docker-compose -f realsense_docker-compose.yaml up
+docker compose -f realsense_docker-compose.yaml up
 ```
 
 **ORB-SLAM3**
 
 ```bash
 cd orbslam_setup/
-docker-compose -f orbslam_docker-compose.yaml up
+docker compose -f orbslam_docker-compose.yaml up
 ```
 
 ## Configuration

@@ -1,12 +1,12 @@
-docker exec -it realsense_setup_realsense_1 bash
+docker exec -it realsense_setup-realsense-1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
-docker exec -it oak_setup_oak_1 bash
+docker exec -it oak_setup-oak-1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
-docker exec -it orbslam_setup_orbslam3_1 bash
+docker exec -it orbslam_setup-orbslam3-1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
@@ -15,7 +15,7 @@ docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 
 
 docker exec oak_setup_oak_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
-docker exec orbslam_setup_orbslam3_1 bash -c "pkill -9 -f 'orbslam3'"
+docker exec orbslam_setup-orbslam3-1 bash -c "pkill -9 -f 'orbslam3'"
 
 docker tag rv_base:v1 inesboujnah/rv_base:v1
 docker push inesboujnah/rv_base:v1

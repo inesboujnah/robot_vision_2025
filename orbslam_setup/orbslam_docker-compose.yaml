@@ -1,10 +1,10 @@
-version: "2.3"
 services:
 
   orbslam3:
     image: rv_orbslam:humble
     ipc: host
     runtime: nvidia
+    stop_signal: SIGINT
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
@@ -13,7 +13,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
       - BAG=
-      - MODE=stereo
+      - MODE=stereo-inertial
       - CAMERA=oak_pro
       - DO_RECTIFY=false
       - FROM_BAG=0
