@@ -58,7 +58,12 @@ def _launch_setup(context, *args, **kwargs):
             'i_right_rect_synced': True,
             'i_align_depth': True,
             'i_subpixel': True,
-            'i_synced': True
+            'i_synced': True,
+            'i_publish_topic': False
+        }
+        
+        params['rgb'] = {
+            'i_publish_topic': False
         }
         
         params['left'] = {
@@ -92,7 +97,8 @@ def _launch_setup(context, *args, **kwargs):
             'i_right_rect_synced': True,
             'i_align_depth': True,
             'i_subpixel': True,
-            'i_synced': True
+            'i_synced': True,
+            'i_publish_topic': False
         }
         
         params['left'] = {
@@ -110,10 +116,15 @@ def _launch_setup(context, *args, **kwargs):
             'i_width': 640,
             'i_height': 400
         }
+        params['rgb'] = {
+            'i_publish_topic': False
+        }
         
         params['imu'] = {
             'i_acc_freq': 400,
             'i_gyro_freq': 400,
+            'i_acc_cov': 0.0,
+            'i_gyro_cov': 0.0,
             'i_synced': False 
         }
 

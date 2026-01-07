@@ -60,6 +60,10 @@ def _launch_setup(context, *args, **kwargs):
             'i_subpixel': True,
             'i_synced': True
         }
+
+        params['rgb'] = {
+            'i_publish_topic': False
+        }
         
         params['left'] = {
             'i_synced': True,
@@ -110,10 +114,16 @@ def _launch_setup(context, *args, **kwargs):
             'i_width': 640,
             'i_height': 400
         }
+
+        params['rgb'] = {
+            'i_publish_topic': False
+        }
         
         params['imu'] = {
             'i_acc_freq': 400,
             'i_gyro_freq': 400,
+            'i_acc_cov': 0.0,
+            'i_gyro_cov': 0.0,
             'i_synced': False 
         }
 

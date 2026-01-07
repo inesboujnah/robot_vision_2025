@@ -11,42 +11,12 @@ File.version: "1.0"
 # Your ROS logs indicate the images are rectified (d vectors are 0.0).
 Camera.type: "Rectified"
 
-# Rectified Camera calibration parameters (OpenCV)
-# Values taken from the P (Projection) matrix in the ROS logs
-Camera1.fx: 804.055
-Camera1.fy: 804.055
-Camera1.cx: 653.464
-Camera1.cy: 366.535
-Camera1.k1: 0.0
-Camera1.k2: 0.0
-Camera1.p1: 0.0
-Camera1.p2: 0.0
+Camera1.fx: 400.225
+Camera1.fy: 400.350
+Camera1.cx: 325.919
+Camera1.cy: 207.655
 
-# Right Camera
-Camera2.fx: 804.055
-Camera2.fy: 804.055
-Camera2.cx: 653.464
-Camera2.cy: 366.535
-Camera1.k1: 0.0
-Camera1.k2: 0.0
-Camera1.p1: 0.0
-Camera1.p2: 0.0
-
-# Transformation from Camera 1 to Camera 2
-# Tx is set to -Baseline (-0.0753)
-Stereo.T_c1_c2: !!opencv-matrix
-   rows: 4
-   cols: 4
-   dt: f
-   data: [1.0, 0.0, 0.0, -0.0753,
-          0.0, 1.0, 0.0, 0.0,
-          0.0, 0.0, 1.0, 0.0,
-          0.0, 0.0, 0.0, 1.0]
-
-
-# Stereo Baseline (in meters)
-# Standard OAK-D baseline is 7.5cm
-Stereo.b: 0.075
+Stereo.b: 0.0753
 
 # Camera resolution
 Camera.width: 640
@@ -66,10 +36,10 @@ IMU.T_b_c1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: f
-   data: [0.99996495,  0.00703277,  0.00453855,  0.00566337,
-         -0.00700041,  0.99995023, -0.00710614, -0.00169807,
-         -0.00458830,  0.00707412,  0.99996442, -0.00019573,
-          0.00000000,  0.00000000,  0.00000000,  1.00000000]
+   data: [0.999949038, -0.0012866105, -0.010010547, -7.53044844,
+          0.00126188027, 0.999996126, -0.00247633806, 0.00812255684,
+          0.0100136949, 0.00246357988, 0.999946833, -0.0221725944,
+          0.00000000, 0.00000000, 0.00000000, 1.00000000]
 
 # Do not insert KFs when recently lost
 IMU.InsertKFsWhenLost: 0

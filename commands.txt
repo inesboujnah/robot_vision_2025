@@ -6,7 +6,7 @@ docker exec -it oak_setup_oak_1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
-docker exec -it orbslam_setup_orbslam_1 bash
+docker exec -it orbslam_setup_orbslam3_1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 

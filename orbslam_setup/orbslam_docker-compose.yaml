@@ -13,7 +13,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
       - BAG=
-      - MODE=stereo-inertial
+      - MODE=stereo
       - CAMERA=oak_pro
       - DO_RECTIFY=false
       - FROM_BAG=0
