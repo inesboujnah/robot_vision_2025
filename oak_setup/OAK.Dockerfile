@@ -7,9 +7,10 @@ WORKDIR /root/colcon_ws/src
 RUN /bin/bash -lc "source /opt/ros/humble/setup.bash && \
     ros2 pkg create launch_manager --build-type ament_python"
 
-# Add launch directory and file
+# Add launch directory and files
 RUN mkdir -p /root/colcon_ws/src/launch_manager/launch
 COPY ros2_launch.py /root/colcon_ws/src/launch_manager/launch/ros2_launch.launch.py
+COPY ros2_launch_w.py /root/colcon_ws/src/launch_manager/launch/ros2_launch_w.launch.py
 
 # Add `glob` import
 RUN sed -i "1 a from glob import glob" /root/colcon_ws/src/launch_manager/setup.py

@@ -10,6 +10,9 @@ docker exec -it orbslam_setup-orbslam3-1 bash
 source /opt/ros/humble/setup.bash
 source /root/colcon_ws/install/setup.bash
 
+docker exec orbslam_setup-orbslam3-1 bash -lc "ps -eo pid,cmd | grep -E 'orbslam3|ORB_SLAM3|stereo|ros2 run orbslam3|ros2 launch orbslam' | grep -v grep"
+docker exec orbslam_setup-orbslam3-1 bash -lc "kill -SIGINT <PID>"
+
 
 docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 

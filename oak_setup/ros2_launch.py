@@ -121,6 +121,7 @@ def _launch_setup(context, *args, **kwargs):
         }
         
         params['imu'] = {
+            'i_synced': False,
             'i_acc_freq': 400,
             'i_gyro_freq': 400,
             'i_acc_cov': 0.0,

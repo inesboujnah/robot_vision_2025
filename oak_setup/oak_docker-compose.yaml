@@ -6,10 +6,10 @@ services:
     stop_signal: SIGINT
     environment:
       - RECORD_BAG=0
-      - MODE=stereo-inertial
+      - MODE=rgbd
       - DISPLAY
       - QT_X11_NO_MITSHM=1
-      - CAMERA=pro
+      - CAMERA=oak_pro_wide
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../memory_register/oak:/root/memory_register/oak
