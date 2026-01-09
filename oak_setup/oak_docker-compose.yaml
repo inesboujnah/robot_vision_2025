@@ -6,7 +6,7 @@ services:
     stop_signal: SIGINT
     environment:
       - RECORD_BAG=0
-      - MODE=rgbd
+      - MODE=stereo-inertial
       - DISPLAY
       - QT_X11_NO_MITSHM=1
       - CAMERA=oak_pro_wide
