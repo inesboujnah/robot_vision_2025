@@ -11,11 +11,10 @@ System.SaveAtlasToFile: "/home/inibo/memory_register/orbslam_data/map/oak_rgbd"
 # We use the Projection (P) matrix values which correspond to the rectified image.
 Camera.type: "PinHole"
 
-Camera1.fx: 581.440
-Camera1.fy: 580.705
-Camera1.cx: 320.123
-Camera1.cy: 197.526
-# CRITICAL: You must use the topic /oak/rgb/image_rect
+Camera1.fx: 581.44037
+Camera1.fy: 580.70471
+Camera1.cx: 320.12274
+Camera1.cy: 197.52635
 Camera1.k1: 0.0
 Camera1.k2: 0.0
 Camera1.p1: 0.0
@@ -40,7 +39,6 @@ RGBD.DepthMapFactor: 1000.0
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-# 1000-1250 is usually sufficient for 640x400
 ORBextractor.nFeatures: 1250
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	

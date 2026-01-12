@@ -2,37 +2,63 @@
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjusted for OAK-D Stereo (Rectified)
+# Source: calibration_reader.py output
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_stereo_inertial"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_pro_wide_stereo"
 
-# "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
-# Your ROS logs indicate the images are rectified (d vectors are 0.0).
-Camera.type: "Rectified"
+# ORB-SLAM3 expects "PinHole" for rectified images.
+Camera.type: "PinHole"
 
-# Rectified Camera calibration parameters (OpenCV)
-# Values taken from the P (Projection) matrix in the ROS logs
-Camera1.fx: 759.81958
-Camera1.fy: 759.81958
-Camera1.cx: 635.24548
-Camera1.cy: 352.52649
+# LEFT Camera (Camera1)
+# From "LEFT Camera resized intrinsics... 640 x 400"
+Camera1.fx: 284.22537
+Camera1.fy: 284.22537
+Camera1.cx: 320.17804
+Camera1.cy: 199.38239
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
 
-# Stereo Baseline (in meters)
-# Standard OAK-D baseline is 7.5cm
-Stereo.b: 0.075
+# RIGHT Camera (Camera2) 
+# From "RIGHT Camera resized intrinsics... 640 x 400"
+Camera2.fx: 285.96011
+Camera2.fy: 285.96011
+Camera2.cx: 326.93951
+Camera2.cy: 212.68333
+Camera2.k1: 0.0
+Camera2.k2: 0.0
+Camera2.p1: 0.0
+Camera2.p2: 0.0
+
+# Transformation between cameras (Left -> Right)
+# Baseline from log: 7.46498 cm -> 0.07465 meters
+# The negative sign in T(0,3) indicates the Right camera is to the right.
+Stereo.T_c1_c2: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [1.0, 0.0, 0.0, -0.07465,
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 1.0]
+
+# Stereo Baseline (meters)
+Stereo.b: 0.07465
 
 # Camera resolution
-Camera.width: 1280
-Camera.height: 720
+Camera.width: 640
+Camera.height: 400
 
 # Camera frames per second 
 Camera.fps: 30
 
-# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+# Color order (ROS uses RGB)
 Camera.RGB: 1
 
-# Close/Far threshold. Baseline times.
+# Depth Threshold (Baseline * 40)
 Stereo.ThDepth: 40.0
 
 # Transformation from body-frame (imu) to left camera
@@ -40,21 +66,24 @@ IMU.T_b_c1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: f
-   data: [0.99996495,  0.00703277,  0.00453855,  0.00566337,
-         -0.00700041,  0.99995023, -0.00710614, -0.00169807,
-         -0.00458830,  0.00707412,  0.99996442, -0.00019573,
-          0.00000000,  0.00000000,  0.00000000,  1.00000000]
+   data: [-0.00000000, 1.00000000, 0.00000000, 6.93499994, 
+          1.00000000, 0.00000000, -0.00000000, -0.20000000, 
+          -0.00000000, -0.00000000, -1.00000000, -0.56500000, 
+          0.00000000, 0.00000000, 0.00000000, 1.00000000]
+
 
 # Do not insert KFs when recently lost
 IMU.InsertKFsWhenLost: 0
 
-# IMU noise (Use those from VINS-mono)
-IMU.NoiseGyro: 1e-3 # 2.44e-4 #1e-3 # rad/s^0.5
-IMU.NoiseAcc: 1e-2 # 1.47e-3 #1e-2 # m/s^1.5
-IMU.GyroWalk: 1e-5 # rad/s^1.5
-IMU.AccWalk: 2e-4 # m/s^2.5
-IMU.Frequency: 400.0
+# IMU noise (Derived from BMI270 Datasheet)
+# Gyro Noise: 0.007 dps/rtHz -> ~1.22e-4 rad/s/rtHz
+# Accel Noise: 160 ug/rtHz -> ~1.57e-3 m/s^2/rtHz
 
+IMU.NoiseGyro: 1.22e-04      # rad/s^0.5
+IMU.NoiseAcc: 1.57e-03       # m/s^1.5
+IMU.GyroWalk: 2.0e-05        # rad/s^1.5 (Estimated for consumer MEMS)
+IMU.AccWalk: 1.0e-04         # m/s^2.5 (Estimated for consumer MEMS)
+IMU.Frequency: 100.0         # Set based on your actual OAK-D frequency
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------

@@ -1,44 +1,42 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters. Adjusted for OAK-D (1280x720)
+# Camera Parameters. Adjusted for OAK-D RGB-D (Rectified)
+# Source: /oak/rgb/camera_info
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_rgbd"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_pro_wide_rgbd"
 
 Camera.type: "PinHole"
 
-# Right Camera calibration and distortion parameters (OpenCV)
+# RGB Camera calibration (Camera1)
 # Values taken from the P matrix (rectified intrinsics)
-Camera1.fx: 759.81958
-Camera1.fy: 759.81958
-Camera1.cx: 635.24548
-Camera1.cy: 352.52649
-
-# Distortion parameters
-# Set to 0.0 because we are using the Projection matrix (P) values.
-# Ensure your ROS node publishes rectified images or the camera is treated as ideal.
+Camera1.fx: 422.12198
+Camera1.fy: 422.12198
+Camera1.cx: 317.35858
+Camera1.cy: 195.84804
 Camera1.k1: 0.0
 Camera1.k2: 0.0
 Camera1.p1: 0.0
 Camera1.p2: 0.0
 
 # Camera resolution
-Camera.width: 1280
-Camera.height: 720
+Camera.width: 640
+Camera.height: 400
 
 # Camera frames per second 
 Camera.fps: 30
 
-# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
-# OAK-D usually sends BGR via ROS, but check your specific pipeline. 
-# Standard OpenCV is BGR (0), but ROS default is often RGB (1).
+# Color order of the images (0: BGR, 1: RGB)
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
+# Points further than (Baseline * 40) are treated as "Far" (Monocular observation)
 Stereo.ThDepth: 40.0
-# Standard OAK-D baseline is 7.5cm (0.075m)
+
+# Stereo Baseline (in meters)
+# Standard OAK-D baseline is 7.5cm. Keep this unless you have a custom mount.
 Stereo.b: 0.075
 
 # Depth map values factor
@@ -49,7 +47,6 @@ RGBD.DepthMapFactor: 1000.0
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-# Increased slightly for 720p resolution
 ORBextractor.nFeatures: 1250
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	

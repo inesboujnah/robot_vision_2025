@@ -2,69 +2,69 @@
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjusted for OAK-D Stereo (Rectified)
+# Source: calibration_reader.py output
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_stereo"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_pro_wide_stereo"
 
-# "Rectified" means ORB-SLAM3 expects images that are already undistorted and aligned.
-# Your ROS logs indicate the images are rectified (d vectors are 0.0).
+# ORB-SLAM3 expects "PinHole" for rectified images.
 Camera.type: "PinHole"
 
-# Rectified Camera calibration parameters (OpenCV)
-# Values taken from the P (Projection) matrix in the ROS logs
-Camera1.fx: 759.81958
-Camera1.fy: 759.81958
-Camera1.cx: 635.24548
-Camera1.cy: 352.52649
+# LEFT Camera (Camera1)
+# From "LEFT Camera resized intrinsics... 640 x 400"
+Camera1.fx: 284.22537
+Camera1.fy: 284.22537
+Camera1.cx: 320.17804
+Camera1.cy: 199.38239
 Camera1.k1: 0.0
 Camera1.k2: 0.0
 Camera1.p1: 0.0
 Camera1.p2: 0.0
 
-Camera2.fx: 759.81958
-Camera2.fy: 759.81958
-Camera2.cx: 635.24548
-Camera2.cy: 352.52649
+# RIGHT Camera (Camera2) 
+# From "RIGHT Camera resized intrinsics... 640 x 400"
+Camera2.fx: 285.96011
+Camera2.fy: 285.96011
+Camera2.cx: 326.93951
+Camera2.cy: 212.68333
 Camera2.k1: 0.0
 Camera2.k2: 0.0
 Camera2.p1: 0.0
 Camera2.p2: 0.0
 
-
+# Transformation between cameras (Left -> Right)
+# Baseline from log: 7.46498 cm -> 0.07465 meters
+# The negative sign in T(0,3) indicates the Right camera is to the right.
 Stereo.T_c1_c2: !!opencv-matrix
    rows: 4
    cols: 4
    dt: f
-   data: [1.0, 0.0, 0.0, -0.05,
+   data: [1.0, 0.0, 0.0, -0.07465,
           0.0, 1.0, 0.0, 0.0,
           0.0, 0.0, 1.0, 0.0,
           0.0, 0.0, 0.0, 1.0]
 
-# Stereo Baseline (in meters)
-# Standard OAK-D baseline is 7.5cm
-Stereo.b: 0.075
+# Stereo Baseline (meters)
+Stereo.b: 0.07465
 
 # Camera resolution
-Camera.width: 1280
-Camera.height: 720
+Camera.width: 640
+Camera.height: 400
 
 # Camera frames per second 
 Camera.fps: 30
 
-# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
-# ROS usually uses RGB order
+# Color order (ROS uses RGB)
 Camera.RGB: 1
 
-# Close/Far threshold. Baseline times.
-# Points further than (Baseline * 40) are treated as "Far" (Monocular observation)
+# Depth Threshold (Baseline * 40)
 Stereo.ThDepth: 40.0
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-# 1250 is acceptable, though 1500-2000 is often better for 720p resolution
 ORBextractor.nFeatures: 1250
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	

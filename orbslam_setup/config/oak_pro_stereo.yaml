@@ -1,36 +1,70 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters. Adjusted for OAK-D Pro Stereo (Rectified)
+# Camera Parameters. Adjusted for OAK-D Stereo (Rectified)
+# Source: calibration_reader.py output
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-Camera.type: "Rectified"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_pro_stereo"
 
-Camera1.fx: 400.225
-Camera1.fy: 400.350
-Camera1.cx: 325.919
-Camera1.cy: 207.655
+# ORB-SLAM3 expects "PinHole" for rectified images.
+Camera.type: "PinHole"
 
-Stereo.b: 0.0753
+# LEFT Camera (Camera1)
+# From "LEFT Camera resized intrinsics... 640 x 400"
+Camera1.fx: 400.22452
+Camera1.fy: 400.34982
+Camera1.cx: 325.91916
+Camera1.cy: 207.65547
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
 
-# Camera resolution 
+# RIGHT Camera (Camera2) 
+# From "RIGHT Camera resized intrinsics... 640 x 400"
+Camera2.fx: 403.77151
+Camera2.fy: 403.76404
+Camera2.cx: 327.54459
+Camera2.cy: 198.87880
+Camera2.k1: 0.0
+Camera2.k2: 0.0
+Camera2.p1: 0.0
+Camera2.p2: 0.0
+
+# Transformation between cameras (Left -> Right)
+# Baseline from log: 7.5304 cm -> 0.07530 meters
+Stereo.T_c1_c2: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [1.0, 0.0, 0.0, -0.07530,
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 1.0]
+
+# Stereo Baseline (meters)
+Stereo.b: 0.07530
+
+# Camera resolution
 Camera.width: 640
 Camera.height: 400
 
 # Camera frames per second 
 Camera.fps: 30
 
-# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+# Color order (ROS uses RGB)
 Camera.RGB: 1
 
+# Depth Threshold (Baseline * 40)
 Stereo.ThDepth: 40.0
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-# 1250 is acceptable, though 1500-2000 is often better for 720p resolution
+# 1250 is fine, but for 640x400 you could safely lower this to 1000 for speed
 ORBextractor.nFeatures: 1250
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
@@ -40,9 +74,6 @@ ORBextractor.scaleFactor: 1.2
 ORBextractor.nLevels: 8
 
 # ORB Extractor: Fast threshold
-# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
-# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
-# You can lower these values if your images have low contrast			
 ORBextractor.iniThFAST: 20
 ORBextractor.minThFAST: 7
 
