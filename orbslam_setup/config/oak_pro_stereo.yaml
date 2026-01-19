@@ -65,7 +65,7 @@ Stereo.ThDepth: 40.0
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
 # 1250 is fine, but for 640x400 you could safely lower this to 1000 for speed
-ORBextractor.nFeatures: 1250
+ORBextractor.nFeatures: 1500
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
 ORBextractor.scaleFactor: 1.2

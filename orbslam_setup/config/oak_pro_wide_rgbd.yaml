@@ -8,7 +8,7 @@ File.version: "1.0"
 
 System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_pro_wide_rgbd"
 
-Camera.type: "PinHole"
+Camera.type: "KannalaBrandt8"
 
 # RGB Camera calibration (Camera1)
 # Values taken from the P matrix (rectified intrinsics)
@@ -47,7 +47,7 @@ RGBD.DepthMapFactor: 1000.0
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1250
+ORBextractor.nFeatures: 1500
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
 ORBextractor.scaleFactor: 1.2

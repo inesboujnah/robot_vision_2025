@@ -14,9 +14,9 @@ docker exec orbslam_setup-orbslam3-1 bash -lc "ps -eo pid,cmd | grep -E 'orbslam
 docker exec orbslam_setup-orbslam3-1 bash -lc "kill -SIGINT <PID>"
 
 
-docker exec realsense_setup_realsense_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
+docker exec realsense_setup-realsense-1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
-docker exec oak_setup_oak_1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
+docker exec oak_setup-oak-1 bash -c "kill -SIGINT \$(pgrep -f 'ros2 bag record')"
 
 docker exec orbslam_setup-orbslam3-1 bash -c "pkill -9 -f 'orbslam3'"
 
