@@ -12,15 +12,14 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
-      - BAG=
-      - MODE=stereo-inertial
-      - CAMERA=oak_pro_wide
+      - MODE=stereo
+      - CAMERA=oak_pro
       - DO_RECTIFY=false
-      - FROM_BAG=0
+      - FROM_BAG=1
+      - BAG=
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
-      # - ../../robot_vision_2025:/root/robot_vision_2025:rw
       - ../memory_register/orbslam_data/trajectory:/root/memory_register/orbslam_data/trajectory
       - ../memory_register/orbslam_data/map:/root/memory_register/orbslam_data/map
       - ../memory_register/oak:/root/memory_register/oak
