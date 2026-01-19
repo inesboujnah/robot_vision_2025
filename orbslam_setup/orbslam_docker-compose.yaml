@@ -22,7 +22,8 @@ services:
       - /dev/dri:/dev/dri
       - ../memory_register/orbslam_data/trajectory:/root/memory_register/orbslam_data/trajectory
       - ../memory_register/orbslam_data/map:/root/memory_register/orbslam_data/map
-      - ../memory_register/oak:/root/memory_register/oak
+      - ../memory_register/oak_pro:/root/memory_register/oak_pro
+      - ../memory_register/oak_pro_wide:/root/memory_register/oak_pro_wide
       - ../memory_register/realsense:/root/memory_register/realsense
       - ../orbslam_setup/config:/root/orbslam_setup/config
     network_mode: host
