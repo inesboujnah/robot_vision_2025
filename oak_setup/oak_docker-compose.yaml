@@ -12,7 +12,8 @@ services:
       - CAMERA=oak_pro
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ../memory_register/oak:/root/memory_register/oak
+      - ../memory_register/oak_pro:/root/memory_register/oak_pro
+      - ../memory_register/oak_pro_wide:/root/memory_register/oak_pro_wide
       - /dev:/dev
     network_mode: host
     privileged: true
