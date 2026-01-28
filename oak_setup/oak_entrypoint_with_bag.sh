@@ -23,7 +23,7 @@ elif [ "${CAMERA}" = "oak_pro_wide" ]; then
     exec ros2 launch launch_manager ros2_launch_w.launch.py mode:=${MODE}
 fi
 
-while ! grep -q "Camera ready" $SLAM_LOG; do
+while ! grep -q "Camera ready!" $SLAM_LOG; do
         sleep 0.1
     
 done
