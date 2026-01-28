@@ -25,8 +25,9 @@ fi
 
 while ! grep -q "Camera ready!" $SLAM_LOG; do
         sleep 0.1
-    
 done
+
+sleep 5
 
 echo "Starting Ground Truth Bridge..."
 ros2 run gt_bridge udp_bridge
