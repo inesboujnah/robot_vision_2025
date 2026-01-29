@@ -33,6 +33,9 @@ class UdpPoseBridge(Node):
         # Check for data frequently
         self.timer = self.create_timer(0.01, self.check_udp)
 
+        print("UDP ROS Bridge initialized!")
+        print()
+
     def check_udp(self):
         try:
             # Receive Data
@@ -42,7 +45,8 @@ class UdpPoseBridge(Node):
             # Extract data
             t_raw = packet["t"]          
             p = packet["pose"]           # [x, y, z, qx, qy, qz, qw]
-
+            print(p)
+            print(p[0])
             msg = PoseStamped()
 
             # --- TIMESTAMP HANDLING ---
@@ -66,6 +70,8 @@ class UdpPoseBridge(Node):
             msg.pose.orientation.w = float(p[6])
             
             self.publisher_.publish(msg)
+
+            print(msg)
 
         except socket.timeout:
             pass # No data this cycle

@@ -7,7 +7,10 @@ source /opt/ros/humble/setup.bash
 
 source /root/colcon_ws/install/setup.bash
 
-cd /root/memory_register/oak
+echo "Starting Ground Truth Bridge..."
+ros2 run gt_bridge udp_bridge &
+
+cd /root/memory_register/"${CAMERA}"
 
 if [ "${RECORD_BAG}" = "1" ] || [ "${RECORD_BAG,,}" = "true" ]; then
     
@@ -22,12 +25,3 @@ if [ "${CAMERA}" = "oak_pro" ]; then
 elif [ "${CAMERA}" = "oak_pro_wide" ]; then
     exec ros2 launch launch_manager ros2_launch_w.launch.py mode:=${MODE}
 fi
-
-while ! grep -q "Camera ready!" $SLAM_LOG; do
-        sleep 0.1
-done
-
-sleep 5
-
-echo "Starting Ground Truth Bridge..."
-ros2 run gt_bridge udp_bridge
