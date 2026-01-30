@@ -45,15 +45,34 @@ def _decompress_zstd(src_path):
     atexit.register(_cleanup_path, tmp_dir)
     return out_path
 
+def _find_bag_file(path):
+    """Find the actual bag file in a directory or return the file path."""
+    if os.path.isdir(path):
+        files = os.listdir(path)
+        # Look for bag files, prioritizing uncompressed then compressed
+        for ext in ['.db3', '.db3.zstd', '.mcap', '.mcap.zstd']:
+            for f in files:
+                if f.endswith(ext):
+                    return os.path.join(path, f)
+        raise FileNotFoundError(f"No bag file found in {path}")
+    return path
+
 def _infer_storage_id(path):
     if os.path.isdir(path):
-        return "mcap"
+        return "sqlite3"  # Will be determined after finding the file
     _, ext = os.path.splitext(path)
+    # Handle compressed extensions
+    if ext in {".zst", ".zstd"}:
+        base, inner_ext = os.path.splitext(path[:-len(ext)])
+        if inner_ext == ".db3":
+            return "sqlite3"
+        if inner_ext == ".mcap":
+            return "mcap"
     if ext == ".db3":
         return "sqlite3"
     if ext == ".mcap":
         return "mcap"
-    return "mcap"
+    return "sqlite3"
 
 def extract_tum_trajectory(bag_path, output_path, topic_name):
     """
@@ -61,6 +80,9 @@ def extract_tum_trajectory(bag_path, output_path, topic_name):
     """
     
     # 1. Setup Reader
+    # First, find the actual bag file if a directory was passed
+    bag_path = _find_bag_file(bag_path)
+    # Then decompress if needed
     bag_path = _decompress_zstd(bag_path)
     reader = SequentialReader()
     storage_options = StorageOptions(uri=bag_path, storage_id=_infer_storage_id(bag_path))

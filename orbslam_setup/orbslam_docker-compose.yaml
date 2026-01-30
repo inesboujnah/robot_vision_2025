@@ -3,7 +3,7 @@ services:
   orbslam3:
     image: rv_orbslam:humble
     ipc: host
-    runtime: nvidia
+    #runtime: nvidia
     stop_signal: SIGINT
     environment:
       - DISPLAY=${DISPLAY}

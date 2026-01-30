@@ -26,6 +26,7 @@ docker login inesboujnah
 
 
 sudo chown -R ines:ines /home/ines/Documents/robot_vision_2025/memory_register
+sudo chown -R hoenig:hoenig /home/hoenig/gemsort_flingbot/robot_vision_2025/memory_register
 
 xhost +
 
