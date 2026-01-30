@@ -94,7 +94,12 @@ fi
 wait $SLAM_PID
 SLAM_EXIT=$?
 
-echo ""
+echo "SLAM finished. Extracting Ground Truth from bag..."
+
+OUTPUT_GT="/root/memory_register/orbslam_data/trajectory/ground_truth_${BAG}.txt"
+
+python3 /root/colcon_ws/src/bag_to_tum.py "/root/memory_register/${CAMERA}/${BAG}" "$OUTPUT_GT" "/robot/ground_truth"
+
 echo "SLAM exited with code: $SLAM_EXIT"
 echo "--- SLAM LOG (last 30 lines) ---"
 tail -n 30 $SLAM_LOG || true
