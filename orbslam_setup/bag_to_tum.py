@@ -1,9 +1,59 @@
 #!/usr/bin/env python3
 import sys
 import argparse
+import os
+import tempfile
+import shutil
+import subprocess
+import atexit
 from rclpy.serialization import deserialize_message
 from rosbag2_py import SequentialReader, StorageOptions, ConverterOptions, StorageFilter
 from geometry_msgs.msg import PoseStamped
+
+def _cleanup_path(path_to_remove):
+    try:
+        if os.path.isdir(path_to_remove):
+            shutil.rmtree(path_to_remove, ignore_errors=True)
+        elif os.path.exists(path_to_remove):
+            os.remove(path_to_remove)
+    except Exception:
+        pass
+
+def _decompress_zstd(src_path):
+    base, ext = os.path.splitext(src_path)
+    if ext not in {".zst", ".zstd"}:
+        return src_path
+
+    tmp_dir = tempfile.mkdtemp(prefix="bag_decompress_")
+    out_path = os.path.join(tmp_dir, os.path.basename(base))
+
+    try:
+        try:
+            import zstandard as zstd
+
+            with open(src_path, "rb") as fin, open(out_path, "wb") as fout:
+                dctx = zstd.ZstdDecompressor()
+                dctx.copy_stream(fin, fout)
+        except ImportError:
+            subprocess.run(["zstd", "-d", "-f", src_path, "-o", out_path], check=True)
+    except Exception as exc:
+        _cleanup_path(tmp_dir)
+        raise RuntimeError(
+            "Failed to decompress Zstd file. Install the 'zstandard' Python package or the 'zstd' CLI."
+        ) from exc
+
+    atexit.register(_cleanup_path, tmp_dir)
+    return out_path
+
+def _infer_storage_id(path):
+    if os.path.isdir(path):
+        return "mcap"
+    _, ext = os.path.splitext(path)
+    if ext == ".db3":
+        return "sqlite3"
+    if ext == ".mcap":
+        return "mcap"
+    return "mcap"
 
 def extract_tum_trajectory(bag_path, output_path, topic_name):
     """
@@ -11,8 +61,9 @@ def extract_tum_trajectory(bag_path, output_path, topic_name):
     """
     
     # 1. Setup Reader
+    bag_path = _decompress_zstd(bag_path)
     reader = SequentialReader()
-    storage_options = StorageOptions(uri=bag_path, storage_id='mcap')
+    storage_options = StorageOptions(uri=bag_path, storage_id=_infer_storage_id(bag_path))
     converter_options = ConverterOptions(
         input_serialization_format='cdr',
         output_serialization_format='cdr'
