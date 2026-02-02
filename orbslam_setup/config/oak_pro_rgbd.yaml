@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-System.SaveAtlasToFile: "/home/inibo/memory_register/orbslam_data/map/oak_rgbd"
+System.SaveAtlasToFile: "memory_register/orbslam_data/map/oak_rgbd"
 
 # ORB-SLAM3 expects an ideal "Pinhole" model. 
 # We use the Projection (P) matrix values which correspond to the rectified image.
