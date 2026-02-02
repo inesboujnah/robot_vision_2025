@@ -13,10 +13,10 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NO_AT_BRIDGE=1
       - MODE=stereo
-      - CAMERA=oak_pro
+      - CAMERA=oak_pro_wide
       - DO_RECTIFY=false
       - FROM_BAG=1
-      - BAG=
+      - BAG=oak_pro_wide_stereo_2026-02-02_12-58-51
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
