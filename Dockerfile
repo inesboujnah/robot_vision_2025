@@ -28,6 +28,9 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y zstd && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN pip3 install zstandard
+
 RUN apt-get update && apt-get install -y \
     python2-dev \
     libavcodec-dev \
