@@ -31,28 +31,3 @@ sudo chown -R hoenig:hoenig /home/hoenig/gemsort_flingbot/robot_vision_2025/memo
 xhost +
 
 docker system prune -f
-
-source /opt/ros/humble/setup.bash && source ~/colcon_ws/install/setup.bash
-
-ros2 launch launch_manager ros2_launch_oak.launch.py mode:=stereo-inertial
-
-ros2 run orbslam3 stereo /home/inibo/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_stereo.yaml false --ros-args --remap camera/right:=/oak/right/image_rect --remap camera/left:=/oak/left/image_rect
-
-ros2 run orbslam3 stereo-inertial ~/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_stereo-inertial.yaml false --ros-args --remap camera/left:=/oak/left/image_rect --remap camera/right:=/oak/right/image_rect --remap imu:=/oak/imu/data
-
-ros2 run orbslam3 rgbd /home/inibo/ORB_SLAM3/Vocabulary/ORBvoc.txt /home/inibo/config/oak_d_rgbd.yaml --ros-args --remap camera/rgb:=/oak/rgb/image_rect --remap camera/depth:=/oak/stereo/image_raw
-
-ros2 node info /ORB_SLAM3_ROS2
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_rgbd_2026-02-02_11-00-23/ground_truth_oak_pro_wide_rgbd_2026-02-02_11-00-23.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_rgbd_2026-02-02_11-00-23/rgbd_full_tum_2026-02-02_17-09-50.txt
-
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-02_12-15-16/ground_truth_oak_pro_wide_stereo_2026-02-02_12-15-16.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-02_12-15-16/stereo_full_tum_2026-02-02_16-39-33.txt
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-02_12-17-20/ground_truth_oak_pro_wide_stereo_2026-02-02_12-17-20.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-02_12-17-20/stereo_full_tum_2026-02-02_16-42-13.txt
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-37-23/ground_truth_oak_pro_wide_stereo_2026-02-03_09-37-23.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-37-23/stereo_full_tum_2026-02-03_09-44-18.txt
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-50-26/ground_truth_oak_pro_wide_stereo_2026-02-03_09-50-26.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-50-26/stereo_full_tum_2026-02-03_09-55-39.txt
-
-python3 evaluate_ate_scale.py memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-57-12/ground_truth_oak_pro_wide_stereo_2026-02-03_09-57-12.txt memory_register/orbslam_data/trajectory/mittel/pro_wide/oak_pro_wide_stereo_2026-02-03_09-57-12/stereo_full_tum_2026-02-03_10-02-04.txt
