@@ -16,7 +16,7 @@ services:
       - CAMERA=oak_pro_wide
       - DO_RECTIFY=false
       - FROM_BAG=1
-      - BAG=oak_pro_wide_stereo_2026-02-02_12-58-51
+      - BAG=
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri
