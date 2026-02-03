@@ -4,6 +4,7 @@ trajectory and the estimated trajectory.
 """
 
 import sys
+import os
 import numpy
 import argparse
 import associate
@@ -77,19 +78,22 @@ def plot_traj(ax,stamps,traj,style,color,label):
     interval = numpy.median([s-t for s,t in zip(stamps[1:],stamps[:-1])])
     x = []
     y = []
+    z = []
     last = stamps[0]
     for i in range(len(stamps)):
         if stamps[i]-last < 2*interval:
             x.append(traj[i][0])
             y.append(traj[i][1])
+            z.append(traj[i][2])
         elif len(x)>0:
-            ax.plot(x,y,style,color=color,label=label)
+            ax.plot(x,y,z,style,color=color,label=label)
             label=""
             x=[]
             y=[]
+            z=[]
         last= stamps[i]
     if len(x)>0:
-        ax.plot(x,y,style,color=color,label=label)
+        ax.plot(x,y,z,style,color=color,label=label)
             
 
 if __name__=="__main__":
@@ -104,10 +108,17 @@ if __name__=="__main__":
     parser.add_argument('--max_difference', help='maximally allowed time difference for matching entries (default: 10000000 ns)',default=20000000)
     parser.add_argument('--save', help='save aligned second trajectory to disk (format: stamp2 x2 y2 z2)')
     parser.add_argument('--save_associations', help='save associated first and aligned second trajectory to disk (format: stamp1 x1 y1 z1 stamp2 x2 y2 z2)')
-    parser.add_argument('--plot', help='plot the first and the aligned second trajectory to an image (format: png)')
+    parser.add_argument('--plot', help='plot the first and the aligned second trajectory to an image (format: pdf, default: memory_register/plots/<groundtruth_name>.pdf)', default=None)
     parser.add_argument('--verbose', help='print all evaluation data (otherwise, only the RMSE absolute translational error in meters after alignment will be printed)', action='store_true')
     parser.add_argument('--verbose2', help='print scale eror and RMSE absolute translational error in meters after alignment with and without scale correction', action='store_true')
     args = parser.parse_args()
+
+    # Generate default plot filename based on ground truth filename
+    if args.plot is None:
+        gt_basename = os.path.splitext(os.path.basename(args.first_file))[0]
+        # Replace "ground_truth" with "plot" in the filename
+        plot_basename = gt_basename.replace('ground_truth', 'plot')
+        args.plot = os.path.join('memory_register', 'plots', plot_basename + '.pdf')
 
     first_list = associate.read_file_list(args.first_file, False)
     second_list = associate.read_file_list(args.second_file, False)
@@ -126,34 +137,34 @@ if __name__=="__main__":
     second_xyz_aligned = scale * rot * second_xyz + trans
     second_xyz_notscaled = rot * second_xyz + trans
     second_xyz_notscaled_full = rot * second_xyz_full + trans
-    first_stamps = first_list.keys()
+    first_stamps = list(first_list.keys())
     first_stamps.sort()
     first_xyz_full = numpy.matrix([[float(value) for value in first_list[b][0:3]] for b in first_stamps]).transpose()
     
-    second_stamps = second_list.keys()
+    second_stamps = list(second_list.keys())
     second_stamps.sort()
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in second_list[b][0:3]] for b in second_stamps]).transpose()
     second_xyz_full_aligned = scale * rot * second_xyz_full + trans
     
     if args.verbose:
-        print "compared_pose_pairs %d pairs"%(len(trans_error))
+        print("compared_pose_pairs %d pairs"%(len(trans_error)))
 
-        print "absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error))
-        print "absolute_translational_error.mean %f m"%numpy.mean(trans_error)
-        print "absolute_translational_error.median %f m"%numpy.median(trans_error)
-        print "absolute_translational_error.std %f m"%numpy.std(trans_error)
-        print "absolute_translational_error.min %f m"%numpy.min(trans_error)
-        print "absolute_translational_error.max %f m"%numpy.max(trans_error)
-        print "max idx: %i" %numpy.argmax(trans_error)
+        print("absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)))
+        print("absolute_translational_error.mean %f m"%numpy.mean(trans_error))
+        print("absolute_translational_error.median %f m"%numpy.median(trans_error))
+        print("absolute_translational_error.std %f m"%numpy.std(trans_error))
+        print("absolute_translational_error.min %f m"%numpy.min(trans_error))
+        print("absolute_translational_error.max %f m"%numpy.max(trans_error))
+        print("max idx: %i" %numpy.argmax(trans_error))
     else:
-        # print "%f, %f " % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
-        # print "%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
-        print "%f,%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)), scale, numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT)))
-        # print "%f" % len(trans_error)
+        # print("%f, %f " % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale))
+        # print("%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale))
+        print("%f,%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)), scale, numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT))))
+        # print("%f" % len(trans_error))
     if args.verbose2:
-        print "compared_pose_pairs %d pairs"%(len(trans_error))
-        print "absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error))
-        print "absolute_translational_errorGT.rmse %f m"%numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT))
+        print("compared_pose_pairs %d pairs"%(len(trans_error)))
+        print("absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)))
+        print("absolute_translational_errorGT.rmse %f m"%numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT)))
 
     if args.save_associations:
         file = open(args.save_associations,"w")
@@ -165,27 +176,60 @@ if __name__=="__main__":
         file.write("\n".join(["%f "%stamp+" ".join(["%f"%d for d in line]) for stamp,line in zip(second_stamps,second_xyz_notscaled_full.transpose().A)]))
         file.close()
 
-    if args.plot:
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
-        import matplotlib.pylab as pylab
-        from matplotlib.patches import Ellipse
+    # Always generate and save plot
+    # Create plots directory if it doesn't exist
+    plot_dir = os.path.dirname(args.plot)
+    if plot_dir and not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    
+    import matplotlib
+    matplotlib.use('TkAgg')
+    import matplotlib.pyplot as plt
+    import matplotlib.pylab as pylab
+    from matplotlib.patches import Ellipse
+    from mpl_toolkits.mplot3d import Axes3D
+
+    all_xyz = numpy.vstack((first_xyz_full.transpose().A, second_xyz_full_aligned.transpose().A))
+    x_min, y_min, z_min = all_xyz.min(axis=0)
+    x_max, y_max, z_max = all_xyz.max(axis=0)
+    max_range = max(x_max - x_min, y_max - y_min, z_max - z_min)
+    x_mid = (x_max + x_min) / 2.0
+    y_mid = (y_max + y_min) / 2.0
+    z_mid = (z_max + z_min) / 2.0
+    half = max_range / 2.0
+
+    def render_plot(include_difference, output_path):
         fig = plt.figure()
-        ax = fig.add_subplot(111)
-        plot_traj(ax,first_stamps,first_xyz_full.transpose().A,'-',"black","ground truth")
-        plot_traj(ax,second_stamps,second_xyz_full_aligned.transpose().A,'-',"blue","estimated")
-        label="difference"
-        for (a,b),(x1,y1,z1),(x2,y2,z2) in zip(matches,first_xyz.transpose().A,second_xyz_aligned.transpose().A):
-            ax.plot([x1,x2],[y1,y2],'-',color="red",label=label)
-            label=""
-            
+        ax = fig.add_subplot(111, projection='3d')
+        plot_traj(ax,first_stamps,first_xyz_full.transpose().A,'-',"black","Ground Truth")
+        plot_traj(ax,second_stamps,second_xyz_full_aligned.transpose().A,'-',"blue","Estimated")
+
+        if include_difference:
+            label="difference"
+            for (a,b),(x1,y1,z1),(x2,y2,z2) in zip(matches,first_xyz.transpose().A,second_xyz_aligned.transpose().A):
+                ax.plot([x1,x2],[y1,y2],[z1,z2],'-',color="red",label=label)
+                label=""
+
         ax.legend()
-            
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
-        plt.axis('equal')
-        plt.savefig(args.plot,format="pdf")
+        ax.set_zlabel('z [m]')
+        # Ensure equal scaling across all axes
+        ax.set_xlim(x_mid - half, x_mid + half)
+        ax.set_ylim(y_mid - half, y_mid + half)
+        ax.set_zlim(z_mid - half, z_mid + half)
+        plt.savefig(output_path,format="pdf")
+        print("Plot saved to: %s" % output_path)
+
+    base, ext = os.path.splitext(args.plot)
+    if not ext:
+        ext = ".pdf"
+        args.plot = base + ext
+    diff_plot = base + "_diff" + ext
+
+    render_plot(False, args.plot)
+    render_plot(True, diff_plot)
+    plt.show()
 
 
         
