@@ -14,6 +14,27 @@ This workspace combines:
 - **Docker Containerization**: Isolated environments for reproducible deployments
 
 
+## Set Up
+
+Clone this repository first:
+
+```bash
+git clone https://github.com/inesboujnah/robot_vision_2025.git
+cd robot_vision_2025
+```
+
+Then, inside this repository, clone the ORB-SLAM3 ROS2 wrapper:
+
+```bash
+git clone https://github.com/inesboujnah/ORB_SLAM3_ROS2.git
+```
+
+Finally, clone the fixed ORB-SLAM3 repository:
+
+```bash
+git clone https://github.com/inesboujnah/ORB_SLAM3.git
+```
+
 ## Quick Start
 
 ### 1. Build Base Docker Image
